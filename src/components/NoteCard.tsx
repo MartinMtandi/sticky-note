@@ -4,6 +4,7 @@ import { Note, NoteColors } from '../utils/types';
 import { autoGrow, setZIndex } from '../utils';
 import { useNotes } from '../services/useNotes';
 import Trash from '../icons/Trash';
+import Spinner from '../icons/Spinner';
 
 interface StyledProps {
     $colors: NoteColors;
@@ -15,9 +16,11 @@ interface CardStyledProps extends StyledProps {
 
 const NoteCard: FC<{ note: Note }> = ({ note }) => {
     const { body, colors } = note;
-    const [pos, setPos] = useState(note.position);
-    const mouseStartPos = useRef({ x: 0, y: 0 });
-    const lastMousePos = useRef({ x: 0, y: 0 });
+    const [pos, setPos] = useState<CardStyledProps['$position']>(note.position);
+    const [saving, setSaving] = useState<boolean>(false);
+    const keyUpTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const mouseStartPos = useRef<CardStyledProps['$position']>({ x: 0, y: 0 });
+    const lastMousePos = useRef<CardStyledProps['$position']>({ x: 0, y: 0 });
     const cardRef = useRef<HTMLDivElement>(null);
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const { updateNote } = useNotes();
@@ -25,6 +28,23 @@ const NoteCard: FC<{ note: Note }> = ({ note }) => {
     useEffect(() => {
         autoGrow(textAreaRef);
     }, []);
+
+    const handleKeyUp = () => {
+        setSaving(true);
+
+        //If we have a timer id, clear it so we can add another two seconds
+        if (keyUpTimer.current) {
+            clearTimeout(keyUpTimer.current);
+        }
+
+        keyUpTimer.current = setTimeout(() => {
+            updateNote({
+                ...note,
+                body: textAreaRef.current?.value || ''
+            });
+            setSaving(false);
+        }, 2000);
+    }
 
     const mouseDown = (e: MouseEvent<HTMLDivElement>) => {
         setZIndex(cardRef.current);
@@ -38,42 +58,48 @@ const NoteCard: FC<{ note: Note }> = ({ note }) => {
         const dx = e.clientX - lastMousePos.current.x;
         const dy = e.clientY - lastMousePos.current.y;
         lastMousePos.current = { x: e.clientX, y: e.clientY };
-        setPos(prevPos => ({ 
+        setPos(prevPos => ({
             x: prevPos.x + dx,
-            y: prevPos.y + dy 
+            y: prevPos.y + dy
         }));
     }
 
     const mouseUp = () => {
         window.removeEventListener('mousemove', mouseMove);
         window.removeEventListener('mouseup', mouseUp);
-        
+
         // Calculate final position
         const finalPosition = {
             x: note.position.x + (lastMousePos.current.x - mouseStartPos.current.x),
             y: note.position.y + (lastMousePos.current.y - mouseStartPos.current.y)
         };
-        
+
         // Update note with final position
         updateNote({
             ...note,
             position: finalPosition
         });
-        
+
         // Update local state
         setPos(finalPosition);
     }
 
     return (
-        <Card 
+        <Card
             data-type="note-card"
-            onMouseDown={mouseDown} 
-            ref={cardRef} 
-            $colors={colors} 
+            onMouseDown={mouseDown}
+            ref={cardRef}
+            $colors={colors}
             $position={pos}
         >
             <CardHeader $colors={colors}>
                 <Trash />
+                {saving && (
+                    <SavingIndicator>
+                        <Spinner color={colors.colorText} />
+                        <SavingText $colors={colors}>Saving...</SavingText>
+                    </SavingIndicator>
+                )}
             </CardHeader>
             <CardBody>
                 <TextArea
@@ -81,6 +107,7 @@ const NoteCard: FC<{ note: Note }> = ({ note }) => {
                     $colors={colors}
                     defaultValue={body}
                     onInput={() => autoGrow(textAreaRef)}
+                    onKeyUp={handleKeyUp}
                     onFocus={() => {
                         setZIndex(cardRef.current);
                     }}
@@ -135,6 +162,16 @@ const CardHeader = styled.div<StyledProps>`
     justify-content: space-between;
     align-items: center;
     padding: 5px;
+`
+
+const SavingIndicator = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 5px;
+`
+
+const SavingText = styled.span<StyledProps>`
+    color: ${props => props.$colors.colorText};
 `
 
 export default NoteCard
