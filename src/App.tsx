@@ -1,8 +1,7 @@
-import React from 'react'
+import { FC } from 'react'
 import NotesPage from './pages/NotesPage'
 
-function App() {
-
+const App: FC = () => {
   return (
     <div id='app'>
       <NotesPage />
