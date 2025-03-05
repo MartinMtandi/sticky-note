@@ -1,6 +1,7 @@
 import { FC, useRef, useEffect, useState, MouseEvent } from 'react'
 import styled from 'styled-components'
 import { Note, NoteColors } from '../assets/fakeData';
+import { autoGrow, setZIndex } from '../utils';
 import Trash from '../icons/Trash';
 
 interface StyledProps {
@@ -22,14 +23,8 @@ const NoteCard: FC<{ note: Note }> = ({ note }) => {
         autoGrow(textAreaRef);
     }, []);
 
-    const autoGrow = (ref: React.RefObject<HTMLTextAreaElement>) => {
-        if (ref?.current) {
-            ref.current.style.height = "auto"; // Reset the height
-            ref.current.style.height = ref.current.scrollHeight + "px"; // Set the new height
-        }
-    }
-
     const mouseDown = (e: MouseEvent<HTMLDivElement>) => {
+        setZIndex(cardRef.current);
         mouseStartPos.current = { x: e.clientX, y: e.clientY };
         window.addEventListener('mousemove', mouseMove);
         window.addEventListener('mouseup', mouseUp);
@@ -47,7 +42,13 @@ const NoteCard: FC<{ note: Note }> = ({ note }) => {
     }
 
     return (
-        <Card onMouseDown={mouseDown} ref={cardRef} $colors={colors} $position={pos}>
+        <Card 
+            data-type="note-card"
+            onMouseDown={mouseDown} 
+            ref={cardRef} 
+            $colors={colors} 
+            $position={pos}
+        >
             <CardHeader $colors={colors}>
                 <Trash />
             </CardHeader>
@@ -57,6 +58,9 @@ const NoteCard: FC<{ note: Note }> = ({ note }) => {
                     $colors={colors}
                     defaultValue={body}
                     onInput={() => autoGrow(textAreaRef)}
+                    onFocus={() => {
+                        setZIndex(cardRef.current);
+                    }}
                 />
             </CardBody>
         </Card>
