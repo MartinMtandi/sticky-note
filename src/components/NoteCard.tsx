@@ -1,6 +1,6 @@
 import { FC, useRef, useEffect, useState, MouseEvent } from 'react'
 import styled from 'styled-components'
-import { Note, NoteColors } from '../assets/fakeData';
+import { Note, NoteColors } from '../utils/types';
 import { autoGrow, setZIndex } from '../utils';
 import Trash from '../icons/Trash';
 
