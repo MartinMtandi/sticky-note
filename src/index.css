@@ -15,13 +15,3 @@ body {
     padding: 0;
     margin: 0;
 }
- 
-#app {
-    background-color: #212228;
-    background-image: linear-gradient(#292a30 0.1em, transparent 0.1em),
-        linear-gradient(90deg, #292a30 0.1em, transparent 0.1em);
-    background-size: 4em 4em;
-    height: 100vh;
-    position: relative;
-    overflow: auto;
-}
