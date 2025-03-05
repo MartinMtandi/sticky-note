@@ -1,4 +1,4 @@
-import { FC, useRef, useEffect } from 'react'
+import { FC, useRef, useEffect, useState, MouseEvent } from 'react'
 import styled from 'styled-components'
 import { Note, NoteColors } from '../assets/fakeData';
 import Trash from '../icons/Trash';
@@ -12,9 +12,12 @@ interface CardStyledProps extends StyledProps {
 }
 
 const NoteCard: FC<{ note: Note }> = ({ note }) => {
-    const { body, colors, position } = note;
+    const { body, colors } = note;
+    const [pos, setPos] = useState(note.position);
+    const mouseStartPos = useRef({ x: 0, y: 0 });
+    const cardRef = useRef<HTMLDivElement>(null);
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
-    
+
     useEffect(() => {
         autoGrow(textAreaRef);
     }, []);
@@ -26,16 +29,33 @@ const NoteCard: FC<{ note: Note }> = ({ note }) => {
         }
     }
 
+    const mouseDown = (e: MouseEvent<HTMLDivElement>) => {
+        mouseStartPos.current = { x: e.clientX, y: e.clientY };
+        window.addEventListener('mousemove', mouseMove);
+        window.addEventListener('mouseup', mouseUp);
+    }
+
+    const mouseMove = (e: globalThis.MouseEvent) => {
+        const dx = e.clientX - mouseStartPos.current.x;
+        const dy = e.clientY - mouseStartPos.current.y;
+        setPos({ x: pos.x + dx, y: pos.y + dy });
+    }
+
+    const mouseUp = () => {
+        window.removeEventListener('mousemove', mouseMove);
+        window.removeEventListener('mouseup', mouseUp);
+    }
+
     return (
-        <Card $colors={colors} $position={position}>
+        <Card onMouseDown={mouseDown} ref={cardRef} $colors={colors} $position={pos}>
             <CardHeader $colors={colors}>
                 <Trash />
             </CardHeader>
             <CardBody>
-                <TextArea 
-                    ref={textAreaRef} 
-                    $colors={colors} 
-                    defaultValue={body} 
+                <TextArea
+                    ref={textAreaRef}
+                    $colors={colors}
+                    defaultValue={body}
                     onInput={() => autoGrow(textAreaRef)}
                 />
             </CardBody>
