@@ -55,9 +55,12 @@ export const useNotes = () => {
     };
 
     const deleteNote = (noteId: number) => {
-        const filteredNotes = notes.filter((note: Note) => note.$id !== noteId);
-        saveNotes(filteredNotes);
-    };
+        setNotes((prevNotes) => {
+            const filteredNotes = prevNotes.filter((note) => note.$id !== noteId);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(filteredNotes));
+            return filteredNotes;
+        });
+    };    
 
     return {
         notes,

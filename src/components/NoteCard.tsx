@@ -14,7 +14,12 @@ interface CardStyledProps extends StyledProps {
     $position: { x: number; y: number };
 }
 
-const NoteCard: FC<{ note: Note }> = ({ note }) => {
+interface NoteCardProps {
+    note: Note;
+    onDelete: () => void;
+}
+
+const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
     const { body, colors } = note;
     const [pos, setPos] = useState<CardStyledProps['$position']>(note.position);
     const [saving, setSaving] = useState<boolean>(false);
@@ -44,6 +49,11 @@ const NoteCard: FC<{ note: Note }> = ({ note }) => {
             });
             setSaving(false);
         }, 2000);
+    }
+
+    const handleDelete = (e: MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation(); // Prevent triggering mouseDown event
+        onDelete();
     }
 
     const mouseDown = (e: MouseEvent<HTMLDivElement>) => {
@@ -93,7 +103,9 @@ const NoteCard: FC<{ note: Note }> = ({ note }) => {
             $position={pos}
         >
             <CardHeader $colors={colors}>
-                <Trash />
+                <DeleteButton onClick={handleDelete}>
+                    <Trash />
+                </DeleteButton>
                 {saving && (
                     <SavingIndicator>
                         <Spinner color={colors.colorText} />
@@ -172,6 +184,20 @@ const SavingIndicator = styled.div`
 
 const SavingText = styled.span<StyledProps>`
     color: ${props => props.$colors.colorText};
+`
+
+const DeleteButton = styled.div`
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
 `
 
 export default NoteCard
