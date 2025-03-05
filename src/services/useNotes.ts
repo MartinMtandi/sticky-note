@@ -48,14 +48,14 @@ export const useNotes = () => {
     };
 
     const updateNote = (updatedNote: Note) => {
-        const updatedNotes = notes.map(note => 
+        const updatedNotes = notes.map((note: Note) => 
             note.$id === updatedNote.$id ? updatedNote : note
         );
         saveNotes(updatedNotes);
     };
 
     const deleteNote = (noteId: number) => {
-        const filteredNotes = notes.filter(note => note.$id !== noteId);
+        const filteredNotes = notes.filter((note: Note) => note.$id !== noteId);
         saveNotes(filteredNotes);
     };
 
