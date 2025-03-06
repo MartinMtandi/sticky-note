@@ -3,8 +3,8 @@ import styled from 'styled-components'
 import { Note, NoteColors } from '../utils/types';
 import { autoGrow, setZIndex } from '../utils';
 import { useNotes } from '../services/useNotes';
-import Trash from '../icons/Trash';
 import Spinner from '../icons/Spinner';
+import DeleteButton from './DeleteButton';
 
 interface StyledProps {
     $colors: NoteColors;
@@ -51,47 +51,52 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
         }, 2000);
     }
 
-    const handleDelete = (e: MouseEvent<HTMLDivElement>) => {
+    const handleDelete = async (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation(); // Prevent triggering mouseDown event
-        onDelete();
+        await onDelete();
     }
 
     const mouseDown = (e: MouseEvent<HTMLDivElement>) => {
-        setZIndex(cardRef.current);
-        mouseStartPos.current = { x: e.clientX, y: e.clientY };
-        lastMousePos.current = { x: e.clientX, y: e.clientY };
-        window.addEventListener('mousemove', mouseMove);
-        window.addEventListener('mouseup', mouseUp);
+        const target = e.target as HTMLElement;
+        if(target.getAttribute('data-type') === 'note-header'){
+            setZIndex(cardRef.current);
+            mouseStartPos.current = { x: e.clientX, y: e.clientY };
+            lastMousePos.current = pos;
+            window.addEventListener('mousemove', mouseMove);
+            window.addEventListener('mouseup', mouseUp); 
+        }
+   
     }
 
     const mouseMove = (e: globalThis.MouseEvent) => {
-        const dx = e.clientX - lastMousePos.current.x;
-        const dy = e.clientY - lastMousePos.current.y;
-        lastMousePos.current = { x: e.clientX, y: e.clientY };
-        setPos(prevPos => ({
-            x: prevPos.x + dx,
-            y: prevPos.y + dy
-        }));
+        const dx = e.clientX - mouseStartPos.current.x;
+        const dy = e.clientY - mouseStartPos.current.y;
+        
+        const newPos = {
+            x: lastMousePos.current.x + dx,
+            y: lastMousePos.current.y + dy
+        };
+        
+        setPos(newPos);
     }
 
-    const mouseUp = () => {
+    const mouseUp = (e: globalThis.MouseEvent) => {
         window.removeEventListener('mousemove', mouseMove);
         window.removeEventListener('mouseup', mouseUp);
 
-        // Calculate final position
-        const finalPosition = {
-            x: note.position.x + (lastMousePos.current.x - mouseStartPos.current.x),
-            y: note.position.y + (lastMousePos.current.y - mouseStartPos.current.y)
+        const dx = e.clientX - mouseStartPos.current.x;
+        const dy = e.clientY - mouseStartPos.current.y;
+        
+        const finalPos = {
+            x: lastMousePos.current.x + dx,
+            y: lastMousePos.current.y + dy
         };
 
-        // Update note with final position
+        // Update note with final calculated position
         updateNote({
             ...note,
-            position: finalPosition
+            position: finalPos
         });
-
-        // Update local state
-        setPos(finalPosition);
     }
 
     return (
@@ -102,10 +107,8 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
             $colors={colors}
             $position={pos}
         >
-            <CardHeader $colors={colors}>
-                <DeleteButton onClick={handleDelete}>
-                    <Trash />
-                </DeleteButton>
+            <CardHeader data-type="note-header" $colors={colors}>
+                <DeleteButton onDelete={handleDelete} />
                 {saving && (
                     <SavingIndicator>
                         <Spinner color={colors.colorText} />
