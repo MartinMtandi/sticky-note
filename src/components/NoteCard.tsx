@@ -59,39 +59,40 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
     const mouseDown = (e: MouseEvent<HTMLDivElement>) => {
         setZIndex(cardRef.current);
         mouseStartPos.current = { x: e.clientX, y: e.clientY };
-        lastMousePos.current = { x: e.clientX, y: e.clientY };
+        lastMousePos.current = pos;
         window.addEventListener('mousemove', mouseMove);
         window.addEventListener('mouseup', mouseUp);
     }
 
     const mouseMove = (e: globalThis.MouseEvent) => {
-        const dx = e.clientX - lastMousePos.current.x;
-        const dy = e.clientY - lastMousePos.current.y;
-        lastMousePos.current = { x: e.clientX, y: e.clientY };
-        setPos(prevPos => ({
-            x: prevPos.x + dx,
-            y: prevPos.y + dy
-        }));
+        const dx = e.clientX - mouseStartPos.current.x;
+        const dy = e.clientY - mouseStartPos.current.y;
+        
+        const newPos = {
+            x: lastMousePos.current.x + dx,
+            y: lastMousePos.current.y + dy
+        };
+        
+        setPos(newPos);
     }
 
-    const mouseUp = () => {
+    const mouseUp = (e: globalThis.MouseEvent) => {
         window.removeEventListener('mousemove', mouseMove);
         window.removeEventListener('mouseup', mouseUp);
 
-        // Calculate final position
-        const finalPosition = {
-            x: note.position.x + (lastMousePos.current.x - mouseStartPos.current.x),
-            y: note.position.y + (lastMousePos.current.y - mouseStartPos.current.y)
+        const dx = e.clientX - mouseStartPos.current.x;
+        const dy = e.clientY - mouseStartPos.current.y;
+        
+        const finalPos = {
+            x: lastMousePos.current.x + dx,
+            y: lastMousePos.current.y + dy
         };
 
-        // Update note with final position
+        // Update note with final calculated position
         updateNote({
             ...note,
-            position: finalPosition
+            position: finalPos
         });
-
-        // Update local state
-        setPos(finalPosition);
     }
 
     return (
