@@ -1,32 +1,27 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import styled from 'styled-components';
 import AddButton from "./AddButton";
-import { useNotes } from '../services/useNotes';
 import Color from './Color';
 import colors from '../assets/colors.json';
+import AddMemberModal from './AddMemberModal';
 
 const Controls: FC = () => {
-    const { addNote } = useNotes();
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const handleAddNote = () => {
-        addNote({
-            body: '',
-            colors: {
-                id: "color-purple",
-                colorHeader: "#FED0FD",
-                colorBody: "#FEE5FD",
-                colorText: "#18181A",
-            },
-            position: { x: 50, y: 50 },
-        });
+    const handleAddMember = () => {
+        setIsModalOpen(true);
     };
 
     return (
         <ControlsContainer>
-            <AddButton onClick={handleAddNote} />
+            <AddButton onClick={handleAddMember} />
             {colors.map((color) => (
                 <Color key={color.id} color={color} />
             ))}
+            <AddMemberModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+            />
         </ControlsContainer>
     );
 };

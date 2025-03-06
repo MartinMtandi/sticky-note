@@ -23,7 +23,20 @@ const StyledAddButton = styled.div`
     width: 40px;
     border-radius: 50%;
     cursor: pointer;
-    transition: 0.3s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, box-shadow;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+        transform: scale(1.1);
+        background-color: rgba(127, 127, 127, 1);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    &:active {
+        transform: scale(0.95);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    }
 `;
 
 export default AddButton;
