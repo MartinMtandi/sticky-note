@@ -16,3 +16,9 @@ export interface Note {
     colors: NoteColors;
     position: NotePosition;
 }
+
+export interface ColorProps {
+    color: {
+        colorHeader: string;
+    };
+}

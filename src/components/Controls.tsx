@@ -2,6 +2,8 @@ import { FC } from 'react';
 import styled from 'styled-components';
 import AddButton from "./AddButton";
 import { useNotes } from '../services/useNotes';
+import Color from './Color';
+import colors from '../assets/colors.json';
 
 const Controls: FC = () => {
     const { addNote } = useNotes();
@@ -22,6 +24,9 @@ const Controls: FC = () => {
     return (
         <ControlsContainer>
             <AddButton onClick={handleAddNote} />
+            {colors.map((color) => (
+                <Color key={color.id} color={color} />
+            ))}
         </ControlsContainer>
     );
 };
