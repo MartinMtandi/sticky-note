@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 import styled from 'styled-components';
-import AddButton from "./AddButton";
+import Button from './Button';
 import Color from './Color';
 import colors from '../assets/colors.json';
 import AddMemberModal from './AddMemberModal';
@@ -14,7 +14,7 @@ const Controls: FC = () => {
 
     return (
         <ControlsContainer>
-            <AddButton onClick={handleAddMember} />
+            <Button variant="add" onClick={handleAddMember} />
             {colors.map((color) => (
                 <Color key={color.id} color={color} />
             ))}
