@@ -24,11 +24,6 @@ const StyledAddButton = styled.div`
     border-radius: 50%;
     cursor: pointer;
     transition: 0.3s;
-
-    &:hover {
-        height: 45px;
-        width: 45px;
-    }
 `;
 
 export default AddButton;
