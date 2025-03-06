@@ -5,6 +5,7 @@ import Typography from './Typography';
 import Close from '../icons/Close';
 import Input from './Input';
 import ColorPalette from './ColorPalette';
+import Button from './Button';
 
 interface AddMemberModalProps {
     isOpen: boolean;
@@ -97,12 +98,12 @@ const AddMemberModal: FC<AddMemberModalProps> = ({ isOpen, onClose }) => {
                     </InputGroup>
                 </ModalBody>
                 <ModalFooter>
-                    <FooterButton onClick={onClose} variant="secondary">
-                        <Typography variant="body2">Cancel</Typography>
-                    </FooterButton>
-                    <FooterButton onClick={handleSubmit} variant="primary">
-                        <Typography variant="body2" color="white">Add Member</Typography>
-                    </FooterButton>
+                    <Button variant="secondary" onClick={onClose}>
+                        Cancel
+                    </Button>
+                    <Button variant="primary" onClick={handleSubmit}>
+                        Add Member
+                    </Button>
                 </ModalFooter>
             </ModalContainer>
         </ModalWrapper>,
@@ -216,23 +217,6 @@ const ModalFooter = styled.div`
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
-`;
-
-const FooterButton = styled.button<{ variant: 'primary' | 'secondary' }>`
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s;
-    background-color: ${({ variant }) => 
-        variant === 'primary' ? '#007bff' : 'transparent'};
-    border: 1px solid ${({ variant }) => 
-        variant === 'primary' ? '#007bff' : '#ddd'};
-
-    &:hover {
-        background-color: ${({ variant }) => 
-            variant === 'primary' ? '#0056b3' : '#f5f5f5'};
-    }
 `;
 
 export default AddMemberModal;
