@@ -51,17 +51,21 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
         }, 2000);
     }
 
-    const handleDelete = (e: MouseEvent<HTMLDivElement>) => {
+    const handleDelete = async (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation(); // Prevent triggering mouseDown event
-        onDelete();
+        await onDelete();
     }
 
     const mouseDown = (e: MouseEvent<HTMLDivElement>) => {
-        setZIndex(cardRef.current);
-        mouseStartPos.current = { x: e.clientX, y: e.clientY };
-        lastMousePos.current = pos;
-        window.addEventListener('mousemove', mouseMove);
-        window.addEventListener('mouseup', mouseUp);
+        const target = e.target as HTMLElement;
+        if(target.getAttribute('data-type') === 'note-header'){
+            setZIndex(cardRef.current);
+            mouseStartPos.current = { x: e.clientX, y: e.clientY };
+            lastMousePos.current = pos;
+            window.addEventListener('mousemove', mouseMove);
+            window.addEventListener('mouseup', mouseUp); 
+        }
+   
     }
 
     const mouseMove = (e: globalThis.MouseEvent) => {
@@ -103,7 +107,7 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
             $colors={colors}
             $position={pos}
         >
-            <CardHeader $colors={colors}>
+            <CardHeader data-type="note-header" $colors={colors}>
                 <DeleteButton onClick={handleDelete}>
                     <Trash />
                 </DeleteButton>
