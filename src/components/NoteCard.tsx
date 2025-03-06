@@ -3,8 +3,8 @@ import styled from 'styled-components'
 import { Note, NoteColors } from '../utils/types';
 import { autoGrow, setZIndex } from '../utils';
 import { useNotes } from '../services/useNotes';
-import Trash from '../icons/Trash';
 import Spinner from '../icons/Spinner';
+import DeleteButton from './DeleteButton';
 
 interface StyledProps {
     $colors: NoteColors;
@@ -108,9 +108,7 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
             $position={pos}
         >
             <CardHeader data-type="note-header" $colors={colors}>
-                <DeleteButton onClick={handleDelete}>
-                    <Trash />
-                </DeleteButton>
+                <DeleteButton onDelete={handleDelete} />
                 {saving && (
                     <SavingIndicator>
                         <Spinner color={colors.colorText} />
@@ -189,20 +187,6 @@ const SavingIndicator = styled.div`
 
 const SavingText = styled.span<StyledProps>`
     color: ${props => props.$colors.colorText};
-`
-
-const DeleteButton = styled.div`
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px;
-    border-radius: 4px;
-    transition: background-color 0.2s ease;
-
-    &:hover {
-        background-color: rgba(0, 0, 0, 0.1);
-    }
 `
 
 export default NoteCard
