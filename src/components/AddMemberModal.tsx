@@ -1,7 +1,10 @@
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import Typography from './Typography';
+import Close from '../icons/Close';
+import Input from './Input';
+import ColorPalette from './ColorPalette';
 
 interface AddMemberModalProps {
     isOpen: boolean;
@@ -9,16 +12,55 @@ interface AddMemberModalProps {
 }
 
 const AddMemberModal: FC<AddMemberModalProps> = ({ isOpen, onClose }) => {
+    const [formData, setFormData] = useState({
+        name: '',
+        color: '#FF9B9B' // Default color
+    });
+    const [errors, setErrors] = useState<Record<string, string>>({});
+
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = 'unset';
+            // Reset form when modal closes
+            setFormData({ name: '', color: '#FF9B9B' });
+            setErrors({});
         }
         return () => {
             document.body.style.overflow = 'unset';
         };
     }, [isOpen]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+        // Clear error when user starts typing
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: '' }));
+        }
+    };
+
+    const handleSubmit = () => {
+        const newErrors: Record<string, string> = {};
+        
+        if (!formData.name.trim()) {
+            newErrors.name = 'Name is required';
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        // TODO: Handle successful submission
+        console.log('Form submitted:', {
+            ...formData,
+            id: Date.now().toString(),
+            timestamp: new Date().toISOString()
+        });
+        onClose();
+    };
 
     if (!isOpen) return null;
 
@@ -29,19 +71,36 @@ const AddMemberModal: FC<AddMemberModalProps> = ({ isOpen, onClose }) => {
                 <ModalHeader>
                     <Typography variant="subtitle1" weight="semibold">Add New Member</Typography>
                     <CloseButton onClick={onClose}>
-                        <Typography variant="body2" color="secondary">×</Typography>
+                        <Close />
                     </CloseButton>
                 </ModalHeader>
                 <ModalBody>
-                    <Typography variant="body1" color="secondary">
-                        Content goes here
-                    </Typography>
+                    <InputGroup>
+                        <Input
+                            id="name"
+                            name="name"
+                            placeholder="Enter full name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            error={errors.name}
+                            fullWidth
+                        />
+                        <ColorSection>
+                            <Typography variant="body2" color="secondary" className="color-label">
+                                Select Color
+                            </Typography>
+                            <ColorPalette
+                                selectedColor={formData.color}
+                                onColorSelect={(color) => setFormData(prev => ({ ...prev, color }))}
+                            />
+                        </ColorSection>
+                    </InputGroup>
                 </ModalBody>
                 <ModalFooter>
                     <FooterButton onClick={onClose} variant="secondary">
                         <Typography variant="body2">Cancel</Typography>
                     </FooterButton>
-                    <FooterButton onClick={() => {}} variant="primary">
+                    <FooterButton onClick={handleSubmit} variant="primary">
                         <Typography variant="body2" color="white">Add Member</Typography>
                     </FooterButton>
                 </ModalFooter>
@@ -71,7 +130,7 @@ const ModalContainer = styled.div`
     position: relative;
     background-color: white;
     border-radius: 12px;
-    min-width: 400px;
+    width: 400px;
     max-width: 90vw;
     max-height: 90vh;
     display: flex;
@@ -105,23 +164,50 @@ const CloseButton = styled.button`
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 1.5rem;
-    padding: 4px;
+    padding: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 4px;
-    transition: background-color 0.2s;
+    transition: all 0.2s;
+    color: #666;
 
     &:hover {
         background-color: #f5f5f5;
+        color: #333;
     }
+
+    &:active {
+        background-color: #eee;
+        transform: scale(0.95);
+    }
+`;
+
+const ColorSection = styled.div`
+    margin-top: 0.5rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+
+    .color-label {
+        margin-bottom: 0.75rem;
+    }
+`;
+
+const InputGroup = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    box-sizing: border-box;
 `;
 
 const ModalBody = styled.div`
     padding: 1.5rem;
     overflow-y: auto;
     flex: 1;
+    width: 100%;
+    box-sizing: border-box;
 `;
 
 const ModalFooter = styled.div`
