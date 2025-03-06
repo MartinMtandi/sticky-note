@@ -18,7 +18,10 @@ export interface Note {
 }
 
 export interface ColorProps {
-    color: {
-        colorHeader: string;
-    };
+    color: NoteColors;
+}
+
+export interface Member extends NoteColors {
+    id: string;
+    name: string;
 }

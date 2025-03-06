@@ -6,6 +6,7 @@ import Close from '../icons/Close';
 import Input from './Input';
 import ColorPalette from './ColorPalette';
 import Button from './Button';
+import { useMembers } from '../services/useMembers';
 
 interface AddMemberModalProps {
     isOpen: boolean;
@@ -13,9 +14,10 @@ interface AddMemberModalProps {
 }
 
 const AddMemberModal: FC<AddMemberModalProps> = ({ isOpen, onClose }) => {
+    const { addMember } = useMembers();
     const [formData, setFormData] = useState({
         name: '',
-        color: '#FF9B9B' // Default color
+        colorHeader: '#FFEFBE' // First color from ColorPalette
     });
     const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -25,7 +27,7 @@ const AddMemberModal: FC<AddMemberModalProps> = ({ isOpen, onClose }) => {
         } else {
             document.body.style.overflow = 'unset';
             // Reset form when modal closes
-            setFormData({ name: '', color: '#FF9B9B' });
+            setFormData({ name: '', colorHeader: '#FFEFBE' });
             setErrors({});
         }
         return () => {
@@ -54,12 +56,14 @@ const AddMemberModal: FC<AddMemberModalProps> = ({ isOpen, onClose }) => {
             return;
         }
 
-        // TODO: Handle successful submission
-        console.log('Form submitted:', {
-            ...formData,
-            id: Date.now().toString(),
-            timestamp: new Date().toISOString()
+        // Add new member with selected color
+        addMember({
+            name: formData.name.trim(),
+            colorHeader: formData.colorHeader,
+            colorBody: formData.colorHeader + '40', // Add 40% transparency
+            colorText: '#18181A'
         });
+
         onClose();
     };
 
@@ -91,8 +95,8 @@ const AddMemberModal: FC<AddMemberModalProps> = ({ isOpen, onClose }) => {
                                 Select Color
                             </Typography>
                             <ColorPalette
-                                selectedColor={formData.color}
-                                onColorSelect={(color) => setFormData(prev => ({ ...prev, color }))}
+                                selectedColor={formData.colorHeader}
+                                onColorSelect={(color) => setFormData(prev => ({ ...prev, colorHeader: color }))}
                             />
                         </ColorSection>
                     </InputGroup>

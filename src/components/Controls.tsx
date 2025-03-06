@@ -2,11 +2,12 @@ import { FC, useState } from 'react';
 import styled from 'styled-components';
 import Button from './Button';
 import Color from './Color';
-import colors from '../assets/colors.json';
+import { useMembers } from '../services/useMembers';
 import AddMemberModal from './AddMemberModal';
 
 const Controls: FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const { members } = useMembers();
 
     const handleAddMember = () => {
         setIsModalOpen(true);
@@ -15,8 +16,11 @@ const Controls: FC = () => {
     return (
         <ControlsContainer>
             <Button variant="add" onClick={handleAddMember} />
-            {colors.map((color) => (
-                <Color key={color.id} color={color} />
+            {members.map((member) => (
+                <Color
+                    key={member.id}
+                    color={member}
+                />
             ))}
             <AddMemberModal
                 isOpen={isModalOpen}

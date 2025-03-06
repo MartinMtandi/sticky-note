@@ -1,12 +1,5 @@
 import { useState, useEffect } from 'react';
-
-interface Member {
-    id: string;
-    name: string;
-    colorHeader: string;
-    colorBody: string;
-    colorText: string;
-}
+import { Member } from '../utils/types';
 
 const STORAGE_KEY = 'sticky-notes-members';
 
