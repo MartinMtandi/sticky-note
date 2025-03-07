@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import Controls from '../Controls'
 import * as useMembersModule from '../../services/useMembers'
 
@@ -41,7 +41,7 @@ describe('Controls', () => {
       />
     )
 
-    const addButton = screen.getByRole('button', { name: /add/i })
+    const addButton = screen.getByTestId('add-button');
     expect(addButton).toBeInTheDocument()
   })
 
