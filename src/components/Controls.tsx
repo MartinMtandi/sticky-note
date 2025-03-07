@@ -1,27 +1,36 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import styled from 'styled-components';
-import AddButton from "./AddButton";
-import { useNotes } from '../services/useNotes';
+import Button from './Button';
+import Color from './Color';
+import { useMembers } from '../services/useMembers';
+import AddMemberModal from './AddMemberModal';
 
 const Controls: FC = () => {
-    const { addNote } = useNotes();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const { members, addMember } = useMembers();
 
-    const handleAddNote = () => {
-        addNote({
-            body: '',
-            colors: {
-                id: "color-purple",
-                colorHeader: "#FED0FD",
-                colorBody: "#FEE5FD",
-                colorText: "#18181A",
-            },
-            position: { x: 50, y: 50 },
-        });
+    const handleAddMember = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleClose = () => {
+        setIsModalOpen(false);
     };
 
     return (
         <ControlsContainer>
-            <AddButton onClick={handleAddNote} />
+            <Button variant="add" onClick={handleAddMember} />
+            {members.map((member) => (
+                <Color
+                    key={member.id}
+                    member={member}
+                />
+            ))}
+            <AddMemberModal
+                isOpen={isModalOpen}
+                onClose={handleClose}
+                addMember={addMember}
+            />
         </ControlsContainer>
     );
 };

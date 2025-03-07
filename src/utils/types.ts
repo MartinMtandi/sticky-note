@@ -16,3 +16,12 @@ export interface Note {
     colors: NoteColors;
     position: NotePosition;
 }
+
+export interface ColorProps {
+    color: NoteColors;
+}
+
+export interface Member extends NoteColors {
+    id: string;
+    name: string;
+}

@@ -4,7 +4,7 @@ import { Note, NoteColors } from '../utils/types';
 import { autoGrow, setZIndex } from '../utils';
 import { useNotes } from '../services/useNotes';
 import Spinner from '../icons/Spinner';
-import DeleteButton from './DeleteButton';
+import Button from './Button';
 
 interface StyledProps {
     $colors: NoteColors;
@@ -51,7 +51,7 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
         }, 2000);
     }
 
-    const handleDelete = async (e: MouseEvent<HTMLDivElement>) => {
+    const handleDelete = async (e: MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
         e.stopPropagation(); // Prevent triggering mouseDown event
         await onDelete();
     }
@@ -108,7 +108,7 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
             $position={pos}
         >
             <CardHeader data-type="note-header" $colors={colors}>
-                <DeleteButton onDelete={handleDelete} />
+                <Button variant="delete" onClick={handleDelete} />
                 {saving && (
                     <SavingIndicator>
                         <Spinner color={colors.colorText} />
