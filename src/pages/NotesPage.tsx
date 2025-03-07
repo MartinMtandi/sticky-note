@@ -3,7 +3,7 @@ import { Note, Member } from '../utils/types';
 import NoteCard from '../components/NoteCard';
 import { useNotes } from '../services/useNotes';
 import Controls from '../components/Controls';
-import ErrorModal from '../components/ErrorModal';
+import ErrorModal from '../components/modals/ErrorModal';
 import TaskPriorityKey from '../components/TaskPriorityKey';
 
 const NotesPage: FC = () => {

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Button from './Button';
 import Color from './Color';
 import { useMembers } from '../services/useMembers';
-import AddMemberModal from './AddMemberModal';
+import AddMemberModal from './modals/AddMemberModal';
 import { Member } from '../utils/types';
 
 interface ControlsProps {

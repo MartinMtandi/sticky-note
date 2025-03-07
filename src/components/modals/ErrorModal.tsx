@@ -1,7 +1,7 @@
 import { FC, MouseEvent } from 'react';
 import styled from 'styled-components';
 import { createPortal } from 'react-dom';
-import Button from './Button';
+import Button from '../Button';
 
 interface ErrorModalProps {
     isOpen: boolean;
