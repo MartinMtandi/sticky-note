@@ -6,6 +6,7 @@ import { useNotes } from '../services/useNotes';
 import { useMembers } from '../services/useMembers';
 import Spinner from '../icons/Spinner';
 import Button from './Button';
+import Checkbox from './Checkbox';
 import { PRIORITY_COLORS, Priority } from '../utils/constants';
 
 interface StyledProps {
@@ -14,6 +15,7 @@ interface StyledProps {
 
 interface CardStyledProps extends StyledProps {
     $position: { x: number; y: number };
+    $completed?: boolean;
 }
 
 interface NoteCardProps {
@@ -22,10 +24,11 @@ interface NoteCardProps {
 }
 
 const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
-    const { body, colors, priority } = note;
+    const { body, colors, priority, completed } = note;
     const [pos, setPos] = useState<CardStyledProps['$position']>(note.position);
     const [saving, setSaving] = useState<boolean>(false);
     const [currentPriority, setCurrentPriority] = useState<Priority | undefined>(priority);
+    const [isCompleted, setIsCompleted] = useState<boolean>(completed || false);
     const keyUpTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const mouseStartPos = useRef<CardStyledProps['$position']>({ x: 0, y: 0 });
     const lastMousePos = useRef<CardStyledProps['$position']>({ x: 0, y: 0 });
@@ -33,6 +36,16 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const { updateNote } = useNotes();
     const { getMember } = useMembers();
+
+    // Define completed colors
+    const completedColors = {
+        colorHeader: '#4A4A4A',
+        colorBody: '#666666',
+        colorText: '#CCCCCC'
+    };
+
+    // Get current colors based on completion status
+    const currentColors = isCompleted ? completedColors : colors;
 
     useEffect(() => {
         autoGrow(textAreaRef);
@@ -70,6 +83,14 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
         updateNote({
             ...note,
             priority: nextPriority
+        });
+    };
+
+    const toggleComplete = () => {
+        setIsCompleted(!isCompleted);
+        updateNote({
+            ...note,
+            completed: !isCompleted
         });
     };
 
@@ -126,37 +147,48 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
             data-type="note-card"
             onMouseDown={mouseDown}
             ref={cardRef}
-            $colors={colors}
+            $colors={currentColors}
             $position={pos}
+            $completed={isCompleted}
         >
-            <CardHeader data-type="note-header" $colors={colors}>
+            <CardHeader data-type="note-header" $colors={currentColors}>
                 <Button variant="delete" onClick={handleDelete} />
                 {saving && (
                     <SavingIndicator>
-                        <Spinner color={colors.colorText} />
-                        <SavingText $colors={colors}>Saving...</SavingText>
+                        <Spinner color={currentColors.colorText} />
+                        <SavingText $colors={currentColors}>Saving...</SavingText>
                     </SavingIndicator>
                 )}
             </CardHeader>
             <CardBody>
                 <TextArea
                     ref={textAreaRef}
-                    $colors={colors}
+                    $colors={currentColors}
                     defaultValue={body}
                     onInput={() => autoGrow(textAreaRef)}
                     onKeyUp={handleKeyUp}
                     onFocus={() => {
                         setZIndex(cardRef.current);
                     }}
+                    disabled={isCompleted}
                 />
             </CardBody>
-            <CardFooter $colors={colors}>
-                <FooterContent>
+            <CardFooter $colors={currentColors}>
+                <FooterLeft>
+                    <Checkbox 
+                        checked={isCompleted} 
+                        onChange={toggleComplete}
+                        color={currentColors.colorHeader}
+                    />
+                    <FooterText $colors={currentColors}>Completed</FooterText>
+                </FooterLeft>
+                <FooterRight>
                     {currentPriority && (
                         <PriorityDot 
                             $color={PRIORITY_COLORS[currentPriority]} 
                             onClick={cyclePriority}
                             title={`${currentPriority.charAt(0) + currentPriority.slice(1).toLowerCase()} Priority - Click to change`}
+                            style={{ opacity: isCompleted ? 0.5 : 1 }}
                         />
                     )}
                     {!currentPriority && (
@@ -167,8 +199,8 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
                             style={{ opacity: 0.5 }}
                         />
                     )}
-                    <FooterText $colors={colors}>{memberName}</FooterText>
-                </FooterContent>
+                    <FooterText $colors={currentColors}>{memberName}</FooterText>
+                </FooterRight>
             </CardFooter>
         </Card>
     )
@@ -182,6 +214,7 @@ const Card = styled.div<CardStyledProps>`
     left: ${props => props.$position.x}px;
     top: ${props => props.$position.y}px;
     background-color: ${props => props.$colors.colorBody};
+    opacity: ${props => props.$completed ? 0.8 : 1};
     box-shadow: 
         0 1px 1px hsl(0deg 0% 0% / 0.075),
         0 2px 2px hsl(0deg 0% 0% / 0.075),
@@ -190,6 +223,7 @@ const Card = styled.div<CardStyledProps>`
         0 16px 16px hsl(0deg 0% 0% / 0.075);
     display: flex;
     flex-direction: column;
+    transition: opacity 0.2s ease;
 `
 
 const CardBody = styled.div`
@@ -205,6 +239,12 @@ const TextArea = styled.textarea<StyledProps>`
     resize: none;
     font-size: 16px;
     color: ${props => props.$colors.colorText};
+    cursor: ${props => props.$colors.colorText === '#CCCCCC' ? 'not-allowed' : 'text'};
+
+    &:disabled {
+        background-color: inherit;
+        color: ${props => props.$colors.colorText};
+    }
 
     &:focus {
         background-color: inherit;
@@ -228,12 +268,18 @@ const CardFooter = styled.div<StyledProps>`
     border-radius: 0 0 5px 5px;
     padding: 0.5em 1em;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
     border-top: 1px solid ${props => props.$colors.colorHeader};
 `
 
-const FooterContent = styled.div`
+const FooterLeft = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+`;
+
+const FooterRight = styled.div`
     display: flex;
     align-items: center;
     gap: 0.5rem;
