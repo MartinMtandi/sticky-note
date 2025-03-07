@@ -4,13 +4,16 @@ import Button from './Button';
 import Color from './Color';
 import { useMembers } from '../services/useMembers';
 import AddMemberModal from './AddMemberModal';
+import { Member } from '../utils/types';
 
 interface ControlsProps {
     className?: string;
+    onActiveMemberChange: (member: Member | null) => void;
 }
 
-const Controls: FC<ControlsProps> = ({ className }) => {
+const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [activeMember, setActiveMember] = useState<Member | null>(null);
     const { members, addMember } = useMembers();
 
     const handleAddMember = () => {
@@ -21,6 +24,12 @@ const Controls: FC<ControlsProps> = ({ className }) => {
         setIsModalOpen(false);
     };
 
+    const handleMemberClick = (member: Member) => {
+        const newActiveMember = activeMember?.id === member.id ? null : member;
+        setActiveMember(newActiveMember);
+        onActiveMemberChange(newActiveMember);
+    };
+
     return (
         <ControlsContainer className={className}>
             <Button variant="add" onClick={handleAddMember} />
@@ -28,6 +37,8 @@ const Controls: FC<ControlsProps> = ({ className }) => {
                 <Color
                     key={member.id}
                     member={member}
+                    isActive={activeMember?.id === member.id}
+                    onClick={() => handleMemberClick(member)}
                 />
             ))}
             <AddMemberModal

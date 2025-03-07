@@ -1,13 +1,14 @@
-import React, { FC, useCallback } from 'react';
-import { Note } from '../utils/types';
+import React, { FC, useCallback, useState } from 'react';
+import { Note, Member } from '../utils/types';
 import NoteCard from '../components/NoteCard';
 import { useNotes } from '../services/useNotes';
 import Controls from '../components/Controls';
-import { useMembers } from '../services/useMembers';
+import ErrorModal from '../components/ErrorModal';
 
 const NotesPage: FC = () => {
   const { notes, addNote, deleteNote } = useNotes();
-  const { members } = useMembers();
+  const [activeMember, setActiveMember] = useState<Member | null>(null);
+  const [showError, setShowError] = useState(false);
   
   const handlePageClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     // Don't create note if clicking on a note or controls
@@ -15,22 +16,10 @@ const NotesPage: FC = () => {
       return;
     }
 
-    // Get first member's colors or use default colors
-    const defaultColors = {
-      id: "default",
-      colorHeader: "#FFEFBE",
-      colorBody: "#FFF7E1",
-      colorText: "#18181A"
-    };
-
-    // Extract just the color properties from the member
-    const firstMember = members[0];
-    const colors = firstMember ? {
-      id: firstMember.id,
-      colorHeader: firstMember.colorHeader,
-      colorBody: firstMember.colorBody,
-      colorText: firstMember.colorText
-    } : defaultColors;
+    if (!activeMember) {
+      setShowError(true);
+      return;
+    }
 
     // Account for scroll position
     const scrollX = window.scrollX || window.pageXOffset;
@@ -38,20 +27,33 @@ const NotesPage: FC = () => {
 
     addNote({
       body: '',
-      colors,
+      colors: {
+        id: activeMember.id,
+        colorHeader: activeMember.colorHeader,
+        colorBody: activeMember.colorBody,
+        colorText: activeMember.colorText
+      },
       position: {
         x: e.clientX + scrollX,
         y: e.clientY + scrollY
       }
     });
-  }, [addNote, members]);
+  }, [addNote, activeMember]);
   
   return (
     <div onClick={handlePageClick} style={{ height: '100%', width: '100%', position: 'relative' }}>
       {notes.map((note: Note) => (
         <NoteCard key={note.$id} note={note} onDelete={() => deleteNote(note.$id)} />
       ))}
-      <Controls className="controls" />
+      <Controls 
+        className="controls" 
+        onActiveMemberChange={setActiveMember}
+      />
+      <ErrorModal
+        isOpen={showError}
+        message="Please select a member color before creating a note."
+        onClose={() => setShowError(false)}
+      />
     </div>
   );
 };
