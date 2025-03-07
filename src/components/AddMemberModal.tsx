@@ -6,16 +6,16 @@ import Close from '../icons/Close';
 import Input from './Input';
 import ColorPalette from './ColorPalette';
 import Button from './Button';
-import { useMembers } from '../services/useMembers';
 import { lightenHexColor } from '../utils';
+import { Member } from '../utils/types';
 
 interface AddMemberModalProps {
     isOpen: boolean;
     onClose: () => void;
+    addMember: (member: Omit<Member, 'id'>) => void;
 }
 
-const AddMemberModal: FC<AddMemberModalProps> = ({ isOpen, onClose }) => {
-    const { addMember } = useMembers();
+const AddMemberModal: FC<AddMemberModalProps> = ({ isOpen, onClose, addMember }) => {
     const [formData, setFormData] = useState({
         name: '',
         colorHeader: '#FFEFBE' // First color from ColorPalette
@@ -56,7 +56,6 @@ const AddMemberModal: FC<AddMemberModalProps> = ({ isOpen, onClose }) => {
             setErrors(newErrors);
             return;
         }
-        console.log(formData.colorHeader)
 
         // Add new member with selected color
         addMember({
@@ -66,6 +65,8 @@ const AddMemberModal: FC<AddMemberModalProps> = ({ isOpen, onClose }) => {
             colorText: '#18181A'
         });
 
+        // Reset form and close modal
+        setFormData({ name: '', colorHeader: '#FFEFBE' });
         onClose();
     };
 

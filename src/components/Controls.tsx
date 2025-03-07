@@ -7,10 +7,14 @@ import AddMemberModal from './AddMemberModal';
 
 const Controls: FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const { members } = useMembers();
+    const { members, addMember } = useMembers();
 
     const handleAddMember = () => {
         setIsModalOpen(true);
+    };
+
+    const handleClose = () => {
+        setIsModalOpen(false);
     };
 
     return (
@@ -24,7 +28,8 @@ const Controls: FC = () => {
             ))}
             <AddMemberModal
                 isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
+                onClose={handleClose}
+                addMember={addMember}
             />
         </ControlsContainer>
     );

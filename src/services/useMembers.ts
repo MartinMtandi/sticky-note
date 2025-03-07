@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Member } from '../utils/types';
 
 const STORAGE_KEY = 'sticky-notes-members';
@@ -7,27 +7,17 @@ const STORAGE_KEY = 'sticky-notes-members';
 const initialMembers: Member[] = [];
 
 export const useMembers = () => {
-    const [members, setMembers] = useState<Member[]>([]);
-
-    // Load members from localStorage on initial mount
-    useEffect(() => {
+    const [members, setMembers] = useState<Member[]>(() => {
         const savedMembers = localStorage.getItem(STORAGE_KEY);
-        if (savedMembers) {
-            setMembers(JSON.parse(savedMembers));
-        } else {
-            // If no saved members, set empty array
-            setMembers(initialMembers);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(initialMembers));
-        }
-    }, []);
+        return savedMembers ? JSON.parse(savedMembers) : initialMembers;
+    });
 
-    // Save members whenever they change
     const saveMembers = (updatedMembers: Member[]) => {
         setMembers(updatedMembers);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedMembers));
     };
 
-    const addMember = (member: Omit<Member, 'id'>) => {
+    const addMember = (member: { name: string; colorHeader: string; colorBody: string; colorText: string }) => {
         const newMember: Member = {
             ...member,
             id: `member-${Date.now()}`, // Use timestamp as unique ID
@@ -35,9 +25,9 @@ export const useMembers = () => {
         saveMembers([...members, newMember]);
     };
 
-    const updateMember = (updatedMember: Member) => {
+    const updateMember = (id: string, updatedMember: Member) => {
         const updatedMembers = members.map((member) => 
-            member.id === updatedMember.id ? updatedMember : member
+            member.id === id ? updatedMember : member
         );
         saveMembers(updatedMembers);
     };
