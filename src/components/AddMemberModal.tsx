@@ -2,7 +2,6 @@ import { FC, useEffect, useState, MouseEvent } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import Typography from './Typography';
-import Close from '../icons/Close';
 import Input from './Input';
 import ColorPalette from './ColorPalette';
 import Button from './Button';
@@ -88,9 +87,7 @@ const AddMemberModal: FC<AddMemberModalProps> = ({ isOpen, onClose, addMember })
             <ModalContainer onClick={e => e.stopPropagation()}>
                 <ModalHeader>
                     <Typography variant="subtitle1" weight="semibold">Add New Member</Typography>
-                    <CloseButton onClick={onClose}>
-                        <Close />
-                    </CloseButton>
+                    <Button variant="close" darkMode={false} onClick={onClose} />
                 </ModalHeader>
                 <ModalBody>
                     <InputGroup>
@@ -176,29 +173,6 @@ const ModalHeader = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-`;
-
-const CloseButton = styled.button`
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-    transition: all 0.2s;
-    color: #666;
-
-    &:hover {
-        background-color: #f5f5f5;
-        color: #333;
-    }
-
-    &:active {
-        background-color: #eee;
-        transform: scale(0.95);
-    }
 `;
 
 const ColorSection = styled.div`

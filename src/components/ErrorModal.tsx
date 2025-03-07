@@ -20,13 +20,17 @@ const ErrorModal: FC<ErrorModalProps> = ({ isOpen, message, onClose }) => {
 
     return (
         <Overlay onClick={handleOverlayClick}>
-            <ModalContent onClick={e => e.stopPropagation()}>
+            <Modal onClick={e => e.stopPropagation()}>
                 <Message>{message}</Message>
-                <Button variant="add" onClick={e => {
-                    e.stopPropagation();
-                    onClose();
-                }} />
-            </ModalContent>
+                <Button 
+                    variant="close" 
+                    darkMode={true}
+                    onClick={e => {
+                        e.stopPropagation();
+                        onClose();
+                    }} 
+                />
+            </Modal>
         </Overlay>
     );
 };
@@ -42,28 +46,42 @@ const Overlay = styled.div`
     justify-content: center;
     align-items: center;
     z-index: 10001;
+    animation: fadeIn 0.2s ease-in-out;
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
 `;
 
-const ModalContent = styled.div`
+const Modal = styled.div`
     background-color: #35363e;
     padding: 2rem;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    box-shadow: 0 1px 1px hsl(0deg 0% 0% / 0.075),
-                0 2px 2px hsl(0deg 0% 0% / 0.075),
-                0 4px 4px hsl(0deg 0% 0% / 0.075),
-                0 8px 8px hsl(0deg 0% 0% / 0.075),
-                0 16px 16px hsl(0deg 0% 0% / 0.075);
+    gap: 1.5rem;
+    max-width: 400px;
+    margin: 0 1rem;
+    box-shadow: 
+        0 1px 1px hsl(0deg 0% 0% / 0.075),
+        0 2px 2px hsl(0deg 0% 0% / 0.075),
+        0 4px 4px hsl(0deg 0% 0% / 0.075),
+        0 8px 8px hsl(0deg 0% 0% / 0.075),
+        0 16px 16px hsl(0deg 0% 0% / 0.075);
 `;
 
 const Message = styled.p`
-    color: white;
-    font-size: 1rem;
     margin: 0;
     text-align: center;
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
 `;
 
 export default ErrorModal;
