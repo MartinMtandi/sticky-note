@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useState, MouseEvent } from 'react';
 import styled from 'styled-components';
 import Button from './Button';
 import Color from './Color';
@@ -16,7 +16,8 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange }) => {
     const [activeMember, setActiveMember] = useState<Member | null>(null);
     const { members, addMember } = useMembers();
 
-    const handleAddMember = () => {
+    const handleAddMember = (e: MouseEvent) => {
+        e.stopPropagation(); // Prevent click from reaching NotesPage
         setIsModalOpen(true);
     };
 

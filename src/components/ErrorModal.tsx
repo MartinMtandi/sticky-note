@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, MouseEvent } from 'react';
 import styled from 'styled-components';
 import Button from './Button';
 
@@ -9,13 +9,23 @@ interface ErrorModalProps {
 }
 
 const ErrorModal: FC<ErrorModalProps> = ({ isOpen, message, onClose }) => {
+    const handleOverlayClick = (e: MouseEvent) => {
+        e.stopPropagation(); // Prevent click from reaching NotesPage
+        if (e.target === e.currentTarget) {
+            onClose();
+        }
+    };
+
     if (!isOpen) return null;
 
     return (
-        <Overlay onClick={onClose}>
+        <Overlay onClick={handleOverlayClick}>
             <ModalContent onClick={e => e.stopPropagation()}>
                 <Message>{message}</Message>
-                <Button variant="add" onClick={onClose} />
+                <Button variant="add" onClick={e => {
+                    e.stopPropagation();
+                    onClose();
+                }} />
             </ModalContent>
         </Overlay>
     );

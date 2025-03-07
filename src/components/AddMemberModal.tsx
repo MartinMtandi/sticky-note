@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState, MouseEvent } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import Typography from './Typography';
@@ -45,7 +45,10 @@ const AddMemberModal: FC<AddMemberModalProps> = ({ isOpen, onClose, addMember })
         }
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = (e: MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation(); // Prevent click from reaching NotesPage
+        
         const newErrors: Record<string, string> = {};
         
         if (!formData.name.trim()) {
@@ -70,12 +73,19 @@ const AddMemberModal: FC<AddMemberModalProps> = ({ isOpen, onClose, addMember })
         onClose();
     };
 
+    const handleOverlayClick = (e: MouseEvent) => {
+        e.stopPropagation(); // Prevent click from reaching NotesPage
+        if (e.target === e.currentTarget) {
+            onClose();
+        }
+    };
+
     if (!isOpen) return null;
 
     return createPortal(
         <ModalWrapper>
-            <Overlay onClick={onClose} />
-            <ModalContainer>
+            <Overlay onClick={handleOverlayClick} />
+            <ModalContainer onClick={e => e.stopPropagation()}>
                 <ModalHeader>
                     <Typography variant="subtitle1" weight="semibold">Add New Member</Typography>
                     <CloseButton onClick={onClose}>
