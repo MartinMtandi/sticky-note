@@ -10,8 +10,12 @@ interface ColorProps {
 
 interface StyledColorProps {
     $backgroundColor: string;
-    $textColor?: string;
     $isActive?: boolean;
+}
+
+interface TooltipTextProps {
+    $textColor: string;
+    children: React.ReactNode;
 }
 
 const Color: FC<ColorProps> = ({ member, isActive = false, onClick }) => {
@@ -23,7 +27,7 @@ const Color: FC<ColorProps> = ({ member, isActive = false, onClick }) => {
             $isActive={isActive}
             data-tooltip={member.name}
         >
-            <Tooltip $backgroundColor={member.colorBody} $textColor={member.colorText}>
+            <Tooltip $backgroundColor={member.colorBody}>
                 <TooltipArrow $backgroundColor={member.colorBody} />
                 <TooltipText $textColor={member.colorText}>{member.name}</TooltipText>
             </Tooltip>
@@ -48,10 +52,6 @@ const ColorButton = styled.button<StyledColorProps>`
         opacity: 1;
         visibility: visible;
     }
-`;
-
-const ColorContainer = styled.div`
-    position: relative;
 `;
 
 const Tooltip = styled.div<StyledColorProps>`
@@ -81,7 +81,7 @@ const TooltipArrow = styled.div<StyledColorProps>`
     border-right: 6px solid ${props => props.$backgroundColor};
 `;
 
-const TooltipText = styled.span<StyledColorProps>`
+const TooltipText = styled.span<TooltipTextProps>`
     color: ${props => props.$textColor};
     font-size: 14px;
     font-weight: 500;
