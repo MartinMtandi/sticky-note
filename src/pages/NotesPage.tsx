@@ -4,6 +4,7 @@ import NoteCard from '../components/NoteCard';
 import { useNotes } from '../services/useNotes';
 import Controls from '../components/Controls';
 import ErrorModal from '../components/ErrorModal';
+import TaskPriorityKey from '../components/TaskPriorityKey';
 
 const NotesPage: FC = () => {
   const { notes, addNote, deleteNote } = useNotes();
@@ -42,6 +43,7 @@ const NotesPage: FC = () => {
   
   return (
     <div onClick={handlePageClick} style={{ height: '100%', width: '100%', position: 'relative' }}>
+      <TaskPriorityKey />
       {notes.map((note: Note) => (
         <NoteCard key={note.$id} note={note} onDelete={() => deleteNote(note.$id)} />
       ))}
