@@ -1,3 +1,5 @@
+import { Priority } from './constants';
+
 interface NotePosition {
     x: number;
     y: number;
@@ -15,6 +17,7 @@ export interface Note {
     colors: NoteColors;
     position: NotePosition;
     memberId?: string;
+    priority?: Priority;
 }
 
 export interface ColorProps {
