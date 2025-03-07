@@ -7,9 +7,22 @@ const STORAGE_KEY = 'sticky-notes-data';
 const initialNotes: Note[] = [
     {
         $id: 1,
-        body: 'Welcome to Sticky Notes!\n\nDrag me around and try adding more notes!',
+        body: 'Welcome to Sticky Notes! 📝\n\n' +
+              '🎯 Quick Tips:\n\n' +
+              '1. Add Team Members:\n' +
+              '   • Click the "+" button\n' +
+              '   • Enter their name and pick a color\n\n' +
+              '2. Add a New Note:\n' +
+              '   • Select a member color on the Control panel and click anywhere on the canvas\n\n' +
+              '3. Filter Notes by Member:\n' +
+              '   • Click a member\'s color\n' +
+              '   • The notes will be filtered to show only notes assigned to that member\n\n' +
+              '   • To remove the filter select the same member again\n\n' +
+              '4. Assign Priority:\n' +
+              '   • Click on the dot next to the Member name on the note\n' +
+              '   • This will toggle between different Priority states\n\n' +
+              'Try it out! Drag me around and create more notes!',
         colors: {
-            id: "color-purple",
             colorHeader: "#FED0FD",
             colorBody: "#FEE5FD",
             colorText: "#18181A",
