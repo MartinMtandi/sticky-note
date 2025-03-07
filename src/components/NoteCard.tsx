@@ -37,6 +37,16 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
     const { updateNote } = useNotes();
     const { getMember } = useMembers();
 
+    // Define completed colors
+    const completedColors = {
+        colorHeader: '#4A4A4A',
+        colorBody: '#666666',
+        colorText: '#CCCCCC'
+    };
+
+    // Get current colors based on completion status
+    const currentColors = isCompleted ? completedColors : colors;
+
     useEffect(() => {
         autoGrow(textAreaRef);
     }, []);
@@ -137,39 +147,40 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
             data-type="note-card"
             onMouseDown={mouseDown}
             ref={cardRef}
-            $colors={colors}
+            $colors={currentColors}
             $position={pos}
             $completed={isCompleted}
         >
-            <CardHeader data-type="note-header" $colors={colors}>
+            <CardHeader data-type="note-header" $colors={currentColors}>
                 <Button variant="delete" onClick={handleDelete} />
                 {saving && (
                     <SavingIndicator>
-                        <Spinner color={colors.colorText} />
-                        <SavingText $colors={colors}>Saving...</SavingText>
+                        <Spinner color={currentColors.colorText} />
+                        <SavingText $colors={currentColors}>Saving...</SavingText>
                     </SavingIndicator>
                 )}
             </CardHeader>
             <CardBody>
                 <TextArea
                     ref={textAreaRef}
-                    $colors={colors}
+                    $colors={currentColors}
                     defaultValue={body}
                     onInput={() => autoGrow(textAreaRef)}
                     onKeyUp={handleKeyUp}
                     onFocus={() => {
                         setZIndex(cardRef.current);
                     }}
+                    disabled={isCompleted}
                 />
             </CardBody>
-            <CardFooter $colors={colors}>
+            <CardFooter $colors={currentColors}>
                 <FooterLeft>
                     <Checkbox 
                         checked={isCompleted} 
                         onChange={toggleComplete}
-                        color={colors.colorHeader}
+                        color={currentColors.colorHeader}
                     />
-                    <FooterText $colors={colors}>Completed</FooterText>
+                    <FooterText $colors={currentColors}>Completed</FooterText>
                 </FooterLeft>
                 <FooterRight>
                     {currentPriority && (
@@ -177,6 +188,7 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
                             $color={PRIORITY_COLORS[currentPriority]} 
                             onClick={cyclePriority}
                             title={`${currentPriority.charAt(0) + currentPriority.slice(1).toLowerCase()} Priority - Click to change`}
+                            style={{ opacity: isCompleted ? 0.5 : 1 }}
                         />
                     )}
                     {!currentPriority && (
@@ -187,7 +199,7 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
                             style={{ opacity: 0.5 }}
                         />
                     )}
-                    <FooterText $colors={colors}>{memberName}</FooterText>
+                    <FooterText $colors={currentColors}>{memberName}</FooterText>
                 </FooterRight>
             </CardFooter>
         </Card>
@@ -202,7 +214,7 @@ const Card = styled.div<CardStyledProps>`
     left: ${props => props.$position.x}px;
     top: ${props => props.$position.y}px;
     background-color: ${props => props.$colors.colorBody};
-    opacity: ${props => props.$completed ? 0.6 : 1};
+    opacity: ${props => props.$completed ? 0.8 : 1};
     box-shadow: 
         0 1px 1px hsl(0deg 0% 0% / 0.075),
         0 2px 2px hsl(0deg 0% 0% / 0.075),
@@ -227,6 +239,12 @@ const TextArea = styled.textarea<StyledProps>`
     resize: none;
     font-size: 16px;
     color: ${props => props.$colors.colorText};
+    cursor: ${props => props.$colors.colorText === '#CCCCCC' ? 'not-allowed' : 'text'};
+
+    &:disabled {
+        background-color: inherit;
+        color: ${props => props.$colors.colorText};
+    }
 
     &:focus {
         background-color: inherit;
