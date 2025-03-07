@@ -1,5 +1,6 @@
 import { FC, MouseEvent } from 'react';
 import styled from 'styled-components';
+import { createPortal } from 'react-dom';
 import Button from './Button';
 
 interface ErrorModalProps {
@@ -18,7 +19,7 @@ const ErrorModal: FC<ErrorModalProps> = ({ isOpen, message, onClose }) => {
 
     if (!isOpen) return null;
 
-    return (
+    return createPortal(
         <Overlay onClick={handleOverlayClick}>
             <Modal onClick={e => e.stopPropagation()}>
                 <Message>{message}</Message>
@@ -31,7 +32,8 @@ const ErrorModal: FC<ErrorModalProps> = ({ isOpen, message, onClose }) => {
                     }} 
                 />
             </Modal>
-        </Overlay>
+        </Overlay>,
+        document.body
     );
 };
 
