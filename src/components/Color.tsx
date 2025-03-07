@@ -2,65 +2,71 @@ import { Member } from "../utils/types";
 import styled from 'styled-components';
 import { FC } from 'react';
 
-interface StyledColorProps {
-    $backgroundColor?: string;
-    $textColor?: string;
+interface ColorProps {
+    member: Member;
+    isActive?: boolean;
+    onClick?: () => void;
 }
 
-const Color: FC<{member: Member}> = ({ member }) => {
+interface StyledColorProps {
+    $backgroundColor: string;
+    $isActive?: boolean;
+}
 
-    const selectMember = () => {
-        
-    };
- 
+interface TooltipTextProps {
+    $textColor: string;
+    children: React.ReactNode;
+}
+
+const Color: FC<ColorProps> = ({ member, isActive = false, onClick }) => {
+
     return (
-        <ColorContainer>
-            <ColorButton
-                onClick={selectMember}
-                $backgroundColor={member.colorHeader}
-            >
-                <Tooltip $backgroundColor={member.colorBody} $textColor={member.colorText}>
-                    <TooltipArrow $backgroundColor={member.colorBody} />
-                    <TooltipText $textColor={member.colorText}>{member.name}</TooltipText>
-                </Tooltip>
-            </ColorButton>
-        </ColorContainer>
+        <ColorButton
+            $backgroundColor={member.colorHeader}
+            onClick={onClick}
+            $isActive={isActive}
+            data-tooltip={member.name}
+        >
+            <Tooltip $backgroundColor={member.colorBody}>
+                <TooltipArrow $backgroundColor={member.colorBody} />
+                <TooltipText $textColor={member.colorText}>{member.name}</TooltipText>
+            </Tooltip>
+        </ColorButton>
     );
 };
 
-const ColorContainer = styled.div`
-    position: relative;
-`;
-
-const ColorButton = styled.div<StyledColorProps>`
-    background-color: ${props => props.$backgroundColor || 'grey'};
-    height: 40px;
-    width: 40px;
+const ColorButton = styled.button<StyledColorProps>`
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
+    border: none;
+    background-color: ${props => props.$backgroundColor};
     cursor: pointer;
-    transition: 0.3s;
     position: relative;
+    padding: 0;
+    outline: ${props => props.$isActive ? '2px solid white' : 'none'};
+    outline-offset: 2px;
+    transition: outline 0.2s ease-in-out;
 
-    &:hover {
-        > div {
-            opacity: 1;
-            visibility: visible;
-        }
+    &:hover > div {
+        opacity: 1;
+        visibility: visible;
     }
 `;
 
 const Tooltip = styled.div<StyledColorProps>`
     position: absolute;
-    left: calc(100% + 12px);
+    left: calc(100% + 15px);
     top: 50%;
     transform: translateY(-50%);
     background-color: ${props => props.$backgroundColor};
-    padding: 0.5rem;
-    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.2s ease-in-out;
-    z-index: 10001;
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+    white-space: nowrap;
+    z-index: 1000;
 `;
 
 const TooltipArrow = styled.div<StyledColorProps>`
@@ -75,11 +81,10 @@ const TooltipArrow = styled.div<StyledColorProps>`
     border-right: 6px solid ${props => props.$backgroundColor};
 `;
 
-const TooltipText = styled.span<StyledColorProps>`
+const TooltipText = styled.span<TooltipTextProps>`
     color: ${props => props.$textColor};
     font-size: 14px;
     font-weight: 500;
-    white-space: nowrap;
 `;
 
 export default Color;

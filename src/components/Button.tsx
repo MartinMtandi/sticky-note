@@ -3,13 +3,16 @@ import styled from 'styled-components';
 import Typography from './Typography';
 import Plus from '../icons/Plus';
 import Trash from '../icons/Trash';
+import Close from '../icons/Close';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-    variant: 'primary' | 'secondary' | 'add' | 'delete';
+    variant: 'primary' | 'secondary' | 'add' | 'delete' | 'close';
+    darkMode?: boolean;
 }
 
 const Button: FC<ButtonProps> = ({ 
     variant = 'primary',
+    darkMode = false,
     children, 
     onClick,
     ...props 
@@ -35,6 +38,14 @@ const Button: FC<ButtonProps> = ({
         );
     }
 
+    if (variant === 'close') {
+        return (
+            <StyledButton as="button" $variant={variant} $darkMode={darkMode} onClick={handleClick} {...props}>
+                <Close />
+            </StyledButton>
+        );
+    }
+
     return (
         <StyledButton $variant={variant} onClick={handleClick} {...props}>
             <Typography variant="body2" color={variant === 'primary' ? 'white' : undefined}>
@@ -44,8 +55,8 @@ const Button: FC<ButtonProps> = ({
     );
 };
 
-const StyledButton = styled.button<{ $variant: 'primary' | 'secondary' | 'add' | 'delete' }>`
-    ${({ $variant }) => {
+const StyledButton = styled.button<{ $variant: ButtonProps['variant']; $darkMode?: boolean }>`
+    ${({ $variant, $darkMode }) => {
         switch ($variant) {
             case 'add':
                 return `
@@ -87,6 +98,28 @@ const StyledButton = styled.button<{ $variant: 'primary' | 'secondary' | 'add' |
 
                     &:hover {
                         background-color: rgba(0, 0, 0, 0.1);
+                    }
+                `;
+            case 'close':
+                return `
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 8px;
+                    border-radius: 50%;
+                    transition: all 0.2s ease;
+                    border: none;
+                    background: none;
+                    color: ${$darkMode ? 'white' : '#18181A'};
+
+                    &:hover {
+                        background-color: ${$darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'};
+                        transform: scale(1.1);
+                    }
+
+                    &:active {
+                        transform: scale(0.95);
                     }
                 `;
             default:

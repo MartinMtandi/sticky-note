@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { Note, NoteColors } from '../utils/types';
 import { autoGrow, setZIndex } from '../utils';
 import { useNotes } from '../services/useNotes';
+import { useMembers } from '../services/useMembers';
 import Spinner from '../icons/Spinner';
 import Button from './Button';
 
@@ -29,6 +30,7 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
     const cardRef = useRef<HTMLDivElement>(null);
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const { updateNote } = useNotes();
+    const { getMember } = useMembers();
 
     useEffect(() => {
         autoGrow(textAreaRef);
@@ -99,8 +101,13 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
         });
     }
 
+    // Get member name from memberId
+    const member = note.memberId ? getMember(note.memberId) : null;
+    const memberName = member?.name || 'Unassigned';
+
     return (
         <Card
+            className="note-card"
             data-type="note-card"
             onMouseDown={mouseDown}
             ref={cardRef}
@@ -128,6 +135,9 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
                     }}
                 />
             </CardBody>
+            <CardFooter $colors={colors}>
+                <FooterText $colors={colors}>{memberName}</FooterText>
+            </CardFooter>
         </Card>
     )
 }
@@ -146,11 +156,13 @@ const Card = styled.div<CardStyledProps>`
     0 4px 4px hsl(0deg 0% 0% / 0.075),
     0 8px 8px hsl(0deg 0% 0% / 0.075),
     0 16px 16px hsl(0deg 0% 0% / 0.075);
+  display: flex;
+  flex-direction: column;
 `
 
 const CardBody = styled.div`
     padding: 1em;
-    border-radius: 0 0 5px 5px;
+    flex: 1;
 `
 
 const TextArea = styled.textarea<StyledProps>`
@@ -179,6 +191,22 @@ const CardHeader = styled.div<StyledProps>`
     padding: 5px;
 `
 
+const CardFooter = styled.div<StyledProps>`
+    background-color: ${props => props.$colors.colorBody};
+    border-radius: 0 0 5px 5px;
+    padding: 0.5em 1em;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    border-top: 1px solid ${props => props.$colors.colorHeader};
+`
+
+const FooterText = styled.span<StyledProps>`
+    color: ${props => props.$colors.colorText};
+    font-size: 12px;
+    font-style: italic;
+`
+
 const SavingIndicator = styled.div`
     display: flex;
     align-items: center;
@@ -189,4 +217,4 @@ const SavingText = styled.span<StyledProps>`
     color: ${props => props.$colors.colorText};
 `
 
-export default NoteCard
+export default NoteCard;

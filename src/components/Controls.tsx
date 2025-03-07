@@ -1,15 +1,23 @@
-import { FC, useState } from 'react';
+import { FC, useState, MouseEvent } from 'react';
 import styled from 'styled-components';
 import Button from './Button';
 import Color from './Color';
 import { useMembers } from '../services/useMembers';
 import AddMemberModal from './AddMemberModal';
+import { Member } from '../utils/types';
 
-const Controls: FC = () => {
+interface ControlsProps {
+    className?: string;
+    onActiveMemberChange: (member: Member | null) => void;
+}
+
+const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [activeMember, setActiveMember] = useState<Member | null>(null);
     const { members, addMember } = useMembers();
 
-    const handleAddMember = () => {
+    const handleAddMember = (e: MouseEvent) => {
+        e.stopPropagation(); // Prevent click from reaching NotesPage
         setIsModalOpen(true);
     };
 
@@ -17,13 +25,21 @@ const Controls: FC = () => {
         setIsModalOpen(false);
     };
 
+    const handleMemberClick = (member: Member) => {
+        const newActiveMember = activeMember?.id === member.id ? null : member;
+        setActiveMember(newActiveMember);
+        onActiveMemberChange(newActiveMember);
+    };
+
     return (
-        <ControlsContainer>
+        <ControlsContainer className={className}>
             <Button variant="add" onClick={handleAddMember} />
             {members.map((member) => (
                 <Color
                     key={member.id}
                     member={member}
+                    isActive={activeMember?.id === member.id}
+                    onClick={() => handleMemberClick(member)}
                 />
             ))}
             <AddMemberModal
