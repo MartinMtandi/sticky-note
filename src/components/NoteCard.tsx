@@ -6,6 +6,7 @@ import { useNotes } from '../services/useNotes';
 import { useMembers } from '../services/useMembers';
 import Spinner from '../icons/Spinner';
 import Button from './Button';
+import Checkbox from './Checkbox';
 import { PRIORITY_COLORS, Priority } from '../utils/constants';
 
 interface StyledProps {
@@ -14,6 +15,7 @@ interface StyledProps {
 
 interface CardStyledProps extends StyledProps {
     $position: { x: number; y: number };
+    $completed?: boolean;
 }
 
 interface NoteCardProps {
@@ -22,10 +24,11 @@ interface NoteCardProps {
 }
 
 const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
-    const { body, colors, priority } = note;
+    const { body, colors, priority, completed } = note;
     const [pos, setPos] = useState<CardStyledProps['$position']>(note.position);
     const [saving, setSaving] = useState<boolean>(false);
     const [currentPriority, setCurrentPriority] = useState<Priority | undefined>(priority);
+    const [isCompleted, setIsCompleted] = useState<boolean>(completed || false);
     const keyUpTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const mouseStartPos = useRef<CardStyledProps['$position']>({ x: 0, y: 0 });
     const lastMousePos = useRef<CardStyledProps['$position']>({ x: 0, y: 0 });
@@ -70,6 +73,14 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
         updateNote({
             ...note,
             priority: nextPriority
+        });
+    };
+
+    const toggleComplete = () => {
+        setIsCompleted(!isCompleted);
+        updateNote({
+            ...note,
+            completed: !isCompleted
         });
     };
 
@@ -128,6 +139,7 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
             ref={cardRef}
             $colors={colors}
             $position={pos}
+            $completed={isCompleted}
         >
             <CardHeader data-type="note-header" $colors={colors}>
                 <Button variant="delete" onClick={handleDelete} />
@@ -151,7 +163,15 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
                 />
             </CardBody>
             <CardFooter $colors={colors}>
-                <FooterContent>
+                <FooterLeft>
+                    <Checkbox 
+                        checked={isCompleted} 
+                        onChange={toggleComplete}
+                        color={colors.colorHeader}
+                    />
+                    <FooterText $colors={colors}>Completed</FooterText>
+                </FooterLeft>
+                <FooterRight>
                     {currentPriority && (
                         <PriorityDot 
                             $color={PRIORITY_COLORS[currentPriority]} 
@@ -168,7 +188,7 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
                         />
                     )}
                     <FooterText $colors={colors}>{memberName}</FooterText>
-                </FooterContent>
+                </FooterRight>
             </CardFooter>
         </Card>
     )
@@ -182,6 +202,7 @@ const Card = styled.div<CardStyledProps>`
     left: ${props => props.$position.x}px;
     top: ${props => props.$position.y}px;
     background-color: ${props => props.$colors.colorBody};
+    opacity: ${props => props.$completed ? 0.6 : 1};
     box-shadow: 
         0 1px 1px hsl(0deg 0% 0% / 0.075),
         0 2px 2px hsl(0deg 0% 0% / 0.075),
@@ -190,6 +211,7 @@ const Card = styled.div<CardStyledProps>`
         0 16px 16px hsl(0deg 0% 0% / 0.075);
     display: flex;
     flex-direction: column;
+    transition: opacity 0.2s ease;
 `
 
 const CardBody = styled.div`
@@ -228,12 +250,18 @@ const CardFooter = styled.div<StyledProps>`
     border-radius: 0 0 5px 5px;
     padding: 0.5em 1em;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
     border-top: 1px solid ${props => props.$colors.colorHeader};
 `
 
-const FooterContent = styled.div`
+const FooterLeft = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+`;
+
+const FooterRight = styled.div`
     display: flex;
     align-items: center;
     gap: 0.5rem;

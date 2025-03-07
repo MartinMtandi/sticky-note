@@ -18,6 +18,7 @@ export interface Note {
     position: NotePosition;
     memberId?: string;
     priority?: Priority;
+    completed?: boolean;
 }
 
 export interface ColorProps {
