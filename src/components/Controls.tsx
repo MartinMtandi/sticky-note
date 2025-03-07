@@ -5,7 +5,11 @@ import Color from './Color';
 import { useMembers } from '../services/useMembers';
 import AddMemberModal from './AddMemberModal';
 
-const Controls: FC = () => {
+interface ControlsProps {
+    className?: string;
+}
+
+const Controls: FC<ControlsProps> = ({ className }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { members, addMember } = useMembers();
 
@@ -18,7 +22,7 @@ const Controls: FC = () => {
     };
 
     return (
-        <ControlsContainer>
+        <ControlsContainer className={className}>
             <Button variant="add" onClick={handleAddMember} />
             {members.map((member) => (
                 <Color

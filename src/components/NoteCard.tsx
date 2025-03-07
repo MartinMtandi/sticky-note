@@ -101,6 +101,7 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
 
     return (
         <Card
+            className="note-card"
             data-type="note-card"
             onMouseDown={mouseDown}
             ref={cardRef}
