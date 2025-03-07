@@ -19,7 +19,7 @@ const Controls: FC = () => {
             {members.map((member) => (
                 <Color
                     key={member.id}
-                    color={member}
+                    member={member}
                 />
             ))}
             <AddMemberModal

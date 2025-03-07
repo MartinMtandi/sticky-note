@@ -7,6 +7,7 @@ import Input from './Input';
 import ColorPalette from './ColorPalette';
 import Button from './Button';
 import { useMembers } from '../services/useMembers';
+import { lightenHexColor } from '../utils';
 
 interface AddMemberModalProps {
     isOpen: boolean;
@@ -55,12 +56,13 @@ const AddMemberModal: FC<AddMemberModalProps> = ({ isOpen, onClose }) => {
             setErrors(newErrors);
             return;
         }
+        console.log(formData.colorHeader)
 
         // Add new member with selected color
         addMember({
             name: formData.name.trim(),
             colorHeader: formData.colorHeader,
-            colorBody: formData.colorHeader + '40', // Add 40% transparency
+            colorBody: lightenHexColor(formData.colorHeader), 
             colorText: '#18181A'
         });
 
