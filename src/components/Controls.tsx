@@ -1,10 +1,11 @@
-import { FC, useState, MouseEvent } from 'react';
+import React, { FC, useState, MouseEvent, Suspense, lazy } from 'react';
 import styled from 'styled-components';
 import Button from './Button';
 import Color from './Color';
 import { useMembers } from '../services/useMembers';
-import AddMemberModal from './modals/AddMemberModal';
 import { Member } from '../utils/types';
+
+const AddMemberModal = lazy(() => import('./modals/AddMemberModal'));
 
 interface ControlsProps {
     className?: string;
@@ -42,11 +43,13 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange }) => {
                     onClick={() => handleMemberClick(member)}
                 />
             ))}
-            <AddMemberModal
-                isOpen={isModalOpen}
-                onClose={handleClose}
-                addMember={addMember}
-            />
+            <Suspense fallback={null}>
+                <AddMemberModal
+                    isOpen={isModalOpen}
+                    onClose={handleClose}
+                    addMember={addMember}
+                />
+            </Suspense>
         </ControlsContainer>
     );
 };
@@ -69,4 +72,4 @@ const ControlsContainer = styled.div`
     z-index: 10000;
 `;
 
-export default Controls;
+export default React.memo(Controls);
