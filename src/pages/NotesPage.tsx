@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, useCallback, useState, useMemo } from 'react';
 import { Note, Member } from '../utils/types';
 import NoteCard from '../components/NoteCard';
 import { useNotes } from '../services/useNotes';
@@ -40,11 +40,17 @@ const NotesPage: FC = () => {
       }
     });
   }, [addNote, activeMember]);
+
+  // Filter notes based on active member
+  const filteredNotes = useMemo(() => {
+    if (!activeMember) return notes;
+    return notes.filter(note => note.memberId === activeMember.id);
+  }, [notes, activeMember]);
   
   return (
     <div onClick={handlePageClick} style={{ height: '100%', width: '100%', position: 'relative' }}>
       <TaskPriorityKey />
-      {notes.map((note: Note) => (
+      {filteredNotes.map((note: Note) => (
         <NoteCard key={note.$id} note={note} onDelete={() => deleteNote(note.$id)} />
       ))}
       <Controls 
