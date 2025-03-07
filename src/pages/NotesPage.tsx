@@ -28,11 +28,11 @@ const NotesPage: FC = () => {
     addNote({
       body: '',
       colors: {
-        id: activeMember.id,
         colorHeader: activeMember.colorHeader,
         colorBody: activeMember.colorBody,
         colorText: activeMember.colorText
       },
+      memberId: activeMember.id,
       position: {
         x: e.clientX + scrollX,
         y: e.clientY + scrollY

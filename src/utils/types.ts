@@ -4,7 +4,6 @@ interface NotePosition {
 }
 
 export interface NoteColors {
-    id: string;
     colorHeader: string;
     colorBody: string;
     colorText: string;
@@ -15,6 +14,7 @@ export interface Note {
     body: string;
     colors: NoteColors;
     position: NotePosition;
+    memberId?: string;
 }
 
 export interface ColorProps {
