@@ -1,4 +1,4 @@
-import { FC, useRef, useEffect, useState, MouseEvent } from 'react'
+import { FC, useCallback, useRef, useEffect, useState, MouseEvent } from 'react'
 import styled from 'styled-components'
 import { Note, NoteColors } from '../utils/types';
 import { autoGrow, setZIndex } from '../utils';
@@ -94,48 +94,47 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
         });
     };
 
-    const mouseDown = (e: MouseEvent<HTMLDivElement>) => {
-        const target = e.target as HTMLElement;
-        if(target.getAttribute('data-type') === 'note-header'){
-            setZIndex(cardRef.current);
-            mouseStartPos.current = { x: e.clientX, y: e.clientY };
-            lastMousePos.current = pos;
-            window.addEventListener('mousemove', mouseMove);
-            window.addEventListener('mouseup', mouseUp); 
-        }
-   
-    }
-
-    const mouseMove = (e: globalThis.MouseEvent) => {
+    const mouseMove = useCallback((e: globalThis.MouseEvent) => {
         const dx = e.clientX - mouseStartPos.current.x;
         const dy = e.clientY - mouseStartPos.current.y;
-        
+    
         const newPos = {
             x: lastMousePos.current.x + dx,
             y: lastMousePos.current.y + dy
         };
-        
+    
         setPos(newPos);
-    }
+    }, [setPos]);
 
-    const mouseUp = (e: globalThis.MouseEvent) => {
-        window.removeEventListener('mousemove', mouseMove);
-        window.removeEventListener('mouseup', mouseUp);
-
+    const mouseUp = useCallback((e: globalThis.MouseEvent) => {
+        window.removeEventListener("mousemove", mouseMove);
+        window.removeEventListener("mouseup", mouseUp);
+    
         const dx = e.clientX - mouseStartPos.current.x;
         const dy = e.clientY - mouseStartPos.current.y;
-        
+    
         const finalPos = {
             x: lastMousePos.current.x + dx,
             y: lastMousePos.current.y + dy
         };
-
+    
         // Update note with final calculated position
         updateNote({
             ...note,
             position: finalPos
         });
-    }
+    }, [updateNote, note, mouseMove]);
+
+    const mouseDown = useCallback((e: MouseEvent<HTMLDivElement>) => {
+        const target = e.target as HTMLElement;
+        if (target.getAttribute("data-type") === "note-header") {
+            setZIndex(cardRef.current);
+            mouseStartPos.current = { x: e.clientX, y: e.clientY };
+            lastMousePos.current = pos;
+            window.addEventListener("mousemove", mouseMove);
+            window.addEventListener("mouseup", mouseUp);
+        }
+    }, [pos, mouseMove, mouseUp]); 
 
     // Get member name from memberId
     const member = note.memberId ? getMember(note.memberId) : null;
