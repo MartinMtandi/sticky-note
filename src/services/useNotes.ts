@@ -27,7 +27,7 @@ const initialNotes: Note[] = [
             colorBody: "#FEE5FD",
             colorText: "#18181A",
         },
-        position: { x: 50, y: 50 },
+        position: { x: 300, y: 50 },
     }
 ];
 

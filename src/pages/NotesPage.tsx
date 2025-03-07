@@ -1,10 +1,10 @@
-import React, { FC, useCallback, useState, useMemo } from 'react';
+import React, { FC, useCallback, useState, useMemo, Suspense, lazy } from 'react';
 import { Note, Member } from '../utils/types';
 import NoteCard from '../components/NoteCard';
 import { useNotes } from '../services/useNotes';
 import Controls from '../components/Controls';
-import ErrorModal from '../components/ErrorModal';
 import TaskPriorityKey from '../components/TaskPriorityKey';
+const ErrorModal = lazy(() => import('../components/modals/ErrorModal'));
 
 const NotesPage: FC = () => {
   const { notes, addNote, deleteNote } = useNotes();
@@ -57,11 +57,13 @@ const NotesPage: FC = () => {
         className="controls" 
         onActiveMemberChange={setActiveMember}
       />
-      <ErrorModal
-        isOpen={showError}
-        message="Please select a member color before creating a note."
-        onClose={() => setShowError(false)}
-      />
+      <Suspense fallback={null}>
+        <ErrorModal
+          isOpen={showError}
+          message="Please select a member color before creating a note."
+          onClose={() => setShowError(false)}
+        />
+      </Suspense>
     </div>
   );
 };

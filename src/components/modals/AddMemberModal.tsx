@@ -1,12 +1,12 @@
 import { FC, useEffect, useState, MouseEvent } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
-import Typography from './Typography';
-import Input from './Input';
-import ColorPalette from './ColorPalette';
-import Button from './Button';
-import { lightenHexColor } from '../utils';
-import { Member } from '../utils/types';
+import Typography from '../Typography';
+import Input from '../Input';
+import ColorPalette from '../ColorPalette';
+import Button from '../Button';
+import { lightenHexColor } from '../../utils';
+import { Member } from '../../utils/types';
 
 interface AddMemberModalProps {
     isOpen: boolean;
