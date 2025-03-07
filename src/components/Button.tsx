@@ -24,7 +24,7 @@ const Button: FC<ButtonProps> = ({
 
     if (variant === 'add') {
         return (
-            <StyledButton as="button" $variant={variant} onClick={handleClick} {...props}>
+            <StyledButton as="button" aria-label="Add" data-testid="add-button" $variant={variant} onClick={handleClick} {...props}>
                 <Plus />
             </StyledButton>
         );
