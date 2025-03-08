@@ -7,6 +7,7 @@ import { useMembers } from '../services/useMembers';
 import Spinner from '../icons/Spinner';
 import Button from './Button';
 import Checkbox from './Checkbox';
+import MenuIcon from '../icons/MenuIcon';
 import { PRIORITY_COLORS, Priority } from '../utils/constants';
 
 interface StyledProps {
@@ -158,6 +159,7 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
                         <SavingText $colors={currentColors}>Saving...</SavingText>
                     </SavingIndicator>
                 )}
+                <MenuIcon onClick={(e) => e.stopPropagation()} />
             </CardHeader>
             <CardBody>
                 <TextArea
@@ -254,13 +256,17 @@ const TextArea = styled.textarea<StyledProps>`
 `
 
 const CardHeader = styled.div<StyledProps>`
-    background-color: ${props => props.$colors.colorHeader}; 
-    border-radius: 5px 5px 0 0;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 5px;
-`
+    padding: 0.5em;
+    background-color: ${props => props.$colors.colorHeader};
+    border-radius: 5px 5px 0 0;
+    position: relative;
+
+    > :first-child {
+        margin-right: auto;
+    }
+`;
 
 const CardFooter = styled.div<StyledProps>`
     background-color: ${props => props.$colors.colorBody};
@@ -306,7 +312,10 @@ const PriorityDot = styled.div<{ $color: string }>`
 const SavingIndicator = styled.div`
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.5em;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 `;
 
 const SavingText = styled.span<StyledProps>`
