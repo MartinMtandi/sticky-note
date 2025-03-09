@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useState, useMemo } from 'react';
 import { Note, Member } from '../utils/types';
 import NoteCard from '../components/NoteCard';
-import { useNotes } from '../services/useNotes';
+import { useNotes } from '../context/GlobalNotesContext';
 import Controls from '../components/Controls';
 import TaskPriorityKey from '../components/TaskPriorityKey';
 import { DEFAULT_NOTE_COLORS } from '../utils/constants';

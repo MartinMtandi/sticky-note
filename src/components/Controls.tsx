@@ -2,7 +2,7 @@ import React, { FC, useState, MouseEvent, Suspense, lazy } from 'react';
 import styled from 'styled-components';
 import Button from './Button';
 import Color from './Color';
-import { useMembers } from '../services/useMembers';
+import { useMembers } from '../context/GlobalMembersContext';
 import { Member } from '../utils/types';
 
 const AddMemberModal = lazy(() => import('./modals/AddMemberModal'));

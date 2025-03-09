@@ -2,8 +2,8 @@ import { FC, useCallback, useRef, useEffect, useState, MouseEvent } from 'react'
 import styled from 'styled-components'
 import { Note, NoteColors, Member } from '../utils/types';
 import { autoGrow, setZIndex } from '../utils';
-import { useNotes } from '../services/useNotes';
-import { useMembers } from '../services/useMembers';
+import { useNotes } from '../context/GlobalNotesContext';
+import { useMembers } from '../context/GlobalMembersContext';
 import Spinner from '../icons/Spinner';
 import Button from './Button';
 import Checkbox from './Checkbox';
