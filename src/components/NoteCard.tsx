@@ -8,7 +8,8 @@ import Spinner from '../icons/Spinner';
 import Button from './Button';
 import Checkbox from './Checkbox';
 import MenuIcon from '../icons/MenuIcon';
-import { PRIORITY_COLORS, Priority } from '../utils/constants';
+import { Priority } from '../utils/constants';
+import { Pill } from './Pill';
 
 interface StyledProps {
     $colors: NoteColors;
@@ -322,6 +323,13 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
                 </div>
             </CardHeader>
             <CardBody>
+                <PillWrapper>
+                    <Pill 
+                        priority={currentPriority}
+                        onClick={cyclePriority}
+                        disabled={isCompleted}
+                    />
+                </PillWrapper>
                 <TextArea
                     ref={textAreaRef}
                     $colors={currentColors}
@@ -344,22 +352,6 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
                     <FooterText $colors={currentColors}>Completed</FooterText>
                 </FooterLeft>
                 <FooterRight>
-                    {currentPriority && (
-                        <PriorityDot 
-                            $color={PRIORITY_COLORS[currentPriority]} 
-                            onClick={cyclePriority}
-                            title={`${currentPriority.charAt(0) + currentPriority.slice(1).toLowerCase()} Priority - Click to change`}
-                            style={{ opacity: isCompleted ? 0.5 : 1 }}
-                        />
-                    )}
-                    {!currentPriority && (
-                        <PriorityDot 
-                            $color="#666"
-                            onClick={cyclePriority}
-                            title="No Priority - Click to set"
-                            style={{ opacity: 0.5 }}
-                        />
-                    )}
                     <FooterText $colors={currentColors}>{memberName}</FooterText>
                 </FooterRight>
             </CardFooter>
@@ -391,6 +383,13 @@ const CardBody = styled.div`
     padding: 1em;
     flex: 1;
 `
+
+const PillWrapper = styled.div`
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    min-height: 24px;
+`;
 
 const TextArea = styled.textarea<StyledProps>`
     background-color: inherit;
@@ -455,19 +454,6 @@ const FooterText = styled.span<StyledProps>`
     font-size: 12px;
     font-style: italic;
 `
-
-const PriorityDot = styled.div<{ $color: string }>`
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background-color: ${props => props.$color};
-    cursor: pointer;
-    transition: transform 0.2s ease;
-
-    &:hover {
-        transform: scale(1.2);
-    }
-`;
 
 const SavingIndicator = styled.div`
     display: flex;

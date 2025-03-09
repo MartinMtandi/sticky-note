@@ -3,7 +3,6 @@ import { Note, Member } from '../utils/types';
 import NoteCard from '../components/NoteCard';
 import { useNotes } from '../context/GlobalNotesContext';
 import Controls from '../components/Controls';
-import TaskPriorityKey from '../components/TaskPriorityKey';
 import { DEFAULT_NOTE_COLORS } from '../utils/constants';
 
 const NotesPage: FC = () => {
@@ -43,7 +42,6 @@ const NotesPage: FC = () => {
   
   return (
     <div onClick={handlePageClick} style={{ height: '100%', width: '100%', position: 'relative' }}>
-      <TaskPriorityKey />
       {filteredNotes.map((note: Note) => (
         <NoteCard key={note.$id} note={note} onDelete={() => deleteNote(note.$id)} />
       ))}
