@@ -28,6 +28,7 @@ const Input: FC<InputProps> = ({
                 id={id}
                 $hasError={!!error}
                 $fullWidth={fullWidth}
+                aria-label="name-input"
                 {...props}
             />
             {error && (
