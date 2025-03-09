@@ -69,6 +69,39 @@ npm run dev
 5. Filter by member
 6. Mark notes complete
 
+### Welcome Note
+When you first open the application, you'll see a welcome note:
+
+```
+Welcome to Sticky Notes! 📝
+
+🎯 Quick Tips:
+
+1. Add Team Members:
+   • Click the "+" button
+   • Enter their name and pick a color
+
+2. Add a New Note:
+   • Select a member color on the Control panel and click anywhere on the canvas
+
+3. Filter Notes by Member:
+   • Click a member's color
+   • The notes will be filtered to show only notes assigned to that member
+   • To remove the filter select the same member again
+
+4. Assign Priority:
+   • Click on the dot next to the Member name on the note
+   • This will toggle between different Priority states
+
+Try it out! Drag me around and create more notes!
+```
+
+This note demonstrates:
+- Draggable functionality
+- Member color styling
+- Priority system
+- Interactive instructions
+
 ## Performance
 
 ### Optimizations
