@@ -1,12 +1,12 @@
 import { FC, useEffect, useState, MouseEvent } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
-import Typography from '../Typography';
-import Input from '../Input';
-import ColorPalette from '../ColorPalette';
-import Button from '../Button';
-import { lightenHexColor } from '../../utils';
-import { Member } from '../../utils/types';
+import Typography from './Typography';
+import Input from './Input';
+import ColorPalette from './ColorPalette';
+import Button from './Button';
+import { lightenHexColor } from '../utils';
+import { Member } from '../utils/types';
 
 interface AddMemberModalProps {
     isOpen: boolean;
@@ -203,11 +203,11 @@ const ModalBody = styled.div`
 `;
 
 const ModalFooter = styled.div`
-    padding: 1.5rem;
+    padding: 1rem 1.5rem;
     border-top: 1px solid #eee;
     display: flex;
     justify-content: flex-end;
-    gap: 1rem;
+    gap: 0.5rem;
 `;
 
 export default AddMemberModal;

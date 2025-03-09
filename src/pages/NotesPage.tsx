@@ -50,6 +50,7 @@ const NotesPage: FC = () => {
       <Controls 
         className="controls" 
         onActiveMemberChange={setActiveMember}
+        activeMember={activeMember}
       />
     </div>
   );
