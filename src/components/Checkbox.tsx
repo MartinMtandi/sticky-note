@@ -13,7 +13,7 @@ const Checkbox: FC<CheckboxProps> = ({ checked, onChange, color }) => {
             <HiddenCheckbox checked={checked} />
             <StyledCheckbox $checked={checked} $color={color}>
                 {checked && (
-                    <CheckMark viewBox="0 0 24 24">
+                    <CheckMark data-testid="checkmark-icon" viewBox="0 0 24 24">
                         <polyline points="20 6 9 17 4 12" />
                     </CheckMark>
                 )}

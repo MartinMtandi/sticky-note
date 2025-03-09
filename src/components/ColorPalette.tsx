@@ -31,6 +31,7 @@ const ColorPalette: FC<ColorPaletteProps> = ({ selectedColor, onColorSelect }) =
                     $isSelected={selectedColor === color}
                     onClick={() => onColorSelect(color)}
                     type="button"
+                    aria-label={color}
                 />
             ))}
         </ColorGrid>
@@ -57,6 +58,7 @@ const ColorButton = styled.button<{ $color: string; $isSelected: boolean }>`
     &:hover {
         transform: scale(1.05);
         border-color: #666;
+        aria-label: ${({ $color }) => $color};
     }
 
     &:active {

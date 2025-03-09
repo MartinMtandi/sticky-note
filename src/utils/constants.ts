@@ -5,3 +5,9 @@ export const PRIORITY_COLORS = {
 } as const;
 
 export type Priority = 'HIGH' | 'MEDIUM' | 'LOW';
+
+export const DEFAULT_NOTE_COLORS = {
+    colorHeader: "#FED0FD",
+    colorBody: "#FEE5FD",
+    colorText: "#18181A",
+} as const;

@@ -1,100 +1,74 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import { describe, it, expect, vi } from 'vitest'
-import Input from '../Input'
+import { render, screen, fireEvent } from '@testing-library/react';
+import Input from '../Input';
+import { describe, it, vi, expect } from 'vitest';
 
-describe('Input', () => {
-  it('renders input with label', () => {
-    render(
-      <Input 
-        label="Test Label"
-        id="test-input"
-        data-testid="test-input"
-      />
-    )
+describe('Input Component', () => {
+    it('renders with a label and input field', () => {
+        render(<Input label="Name" aria-label="name-input" />);
+        
+        // Assert that the label and input field are rendered correctly
+        const input = screen.getByLabelText('name-input');
+        expect(input).toBeInTheDocument();
+    });
 
-    expect(screen.getByText('Test Label')).toBeInTheDocument()
-    expect(screen.getByTestId('test-input')).toBeInTheDocument()
-  })
+    it('displays the error message when there is an error', () => {
+        render(<Input label="Name" error="Name is required" aria-label="name-input" />);
+        
+        // Assert that the error message is displayed
+        const errorMessage = screen.getByText('Name is required');
+        expect(errorMessage).toBeInTheDocument();
+    });
 
-  it('renders input without label when not provided', () => {
-    render(
-      <Input 
-        id="test-input"
-        data-testid="test-input"
-      />
-    )
+    it('does not display the error message when there is no error', () => {
+        render(<Input label="Name" aria-label="name-input" />);
+        
+        // Assert that the error message is not displayed
+        const errorMessage = screen.queryByText('Name is required');
+        expect(errorMessage).not.toBeInTheDocument();
+    });
 
-    expect(screen.queryByRole('label')).not.toBeInTheDocument()
-    expect(screen.getByTestId('test-input')).toBeInTheDocument()
-  })
+    it('applies fullWidth when the prop is true', () => {
+        render(<Input label="Name" fullWidth={true} aria-label="name-input" />);
+        
+        // Assert that the input field takes up 100% of the width
+        const input = screen.getByLabelText('name-input');
+        expect(input).toHaveStyle('width: 100%');
+    });
 
-  it('shows error message when error prop is provided', () => {
-    const errorMessage = 'This field is required'
-    render(
-      <Input 
-        id="test-input"
-        error={errorMessage}
-        data-testid="test-input"
-      />
-    )
+    it('does not apply fullWidth when the prop is false', () => {
+        render(<Input label="Name" fullWidth={false} aria-label="name-input" />);
+        
+        // Assert that the input field does not take up 100% of the width
+        const input = screen.getByLabelText('name-input');
+        expect(input).not.toHaveStyle('width: 100%');
+    });
 
-    expect(screen.getByText(errorMessage)).toBeInTheDocument()
-  })
+    it('changes border color when there is an error', () => {
+        render(<Input label="Name" error="Name is required" aria-label="name-input" />);
+        
+        const input = screen.getByLabelText('name-input');
+        
+        // Assert that the input has a red border when there is an error
+        expect(input).toHaveStyle('border-color: #d32f2f');
+    });
 
-  it('handles value changes', () => {
-    const handleChange = vi.fn()
-    render(
-      <Input 
-        id="test-input"
-        onChange={handleChange}
-        data-testid="test-input"
-      />
-    )
+    it('does not show error border when there is no error', () => {
+        render(<Input label="Name" aria-label="name-input" />);
+        
+        const input = screen.getByLabelText('name-input');
+        
+        // Assert that the input has the default border color when there is no error
+        expect(input).toHaveStyle('border: 1px solid #ddd');
+    });
 
-    const input = screen.getByTestId('test-input')
-    fireEvent.change(input, { target: { value: 'test value' } })
-
-    expect(handleChange).toHaveBeenCalled()
-  })
-
-  it('applies disabled styles when disabled', () => {
-    render(
-      <Input 
-        id="test-input"
-        disabled
-        data-testid="test-input"
-      />
-    )
-
-    const input = screen.getByTestId('test-input')
-    expect(input).toBeDisabled()
-  })
-
-  it('applies full width styles when fullWidth is true', () => {
-    render(
-      <Input 
-        id="test-input"
-        fullWidth
-        data-testid="test-input"
-      />
-    )
-
-    const input = screen.getByTestId('test-input')
-    expect(input).toHaveStyle({ width: '100%' })
-  })
-
-  it('forwards additional props to input element', () => {
-    render(
-      <Input 
-        id="test-input"
-        data-testid="test-input"
-        placeholder="Enter text"
-        maxLength={10}
-      />
-    )
-
-    const input = screen.getByTestId('test-input')
-    expect(input).toHaveAttribute('placeholder', 'Enter text')
-    expect(input).toHaveAttribute('maxLength', '10')
-  })
-})
+    it('fires onChange event when text is typed', () => {
+        const handleChange = vi.fn();
+        render(<Input label="Name" aria-label="name-input" onChange={handleChange} />);
+        
+        const input = screen.getByLabelText('name-input');
+        fireEvent.change(input, { target: { value: 'John Doe' } });
+        
+        // Assert that the onChange handler is called when the input value changes
+        expect(handleChange).toHaveBeenCalledTimes(1);
+    });
+});

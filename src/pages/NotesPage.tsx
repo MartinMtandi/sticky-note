@@ -1,24 +1,18 @@
-import React, { FC, useCallback, useState, useMemo, Suspense, lazy } from 'react';
+import React, { FC, useCallback, useState, useMemo } from 'react';
 import { Note, Member } from '../utils/types';
 import NoteCard from '../components/NoteCard';
-import { useNotes } from '../services/useNotes';
+import { useNotes } from '../context/GlobalNotesContext';
 import Controls from '../components/Controls';
 import TaskPriorityKey from '../components/TaskPriorityKey';
-const ErrorModal = lazy(() => import('../components/modals/ErrorModal'));
+import { DEFAULT_NOTE_COLORS } from '../utils/constants';
 
 const NotesPage: FC = () => {
   const { notes, addNote, deleteNote } = useNotes();
   const [activeMember, setActiveMember] = useState<Member | null>(null);
-  const [showError, setShowError] = useState(false);
   
   const handlePageClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     // Don't create note if clicking on a note or controls
     if ((e.target as HTMLElement).closest('.note-card, .controls')) {
-      return;
-    }
-
-    if (!activeMember) {
-      setShowError(true);
       return;
     }
 
@@ -28,12 +22,12 @@ const NotesPage: FC = () => {
 
     addNote({
       body: '',
-      colors: {
+      colors: activeMember ? {
         colorHeader: activeMember.colorHeader,
         colorBody: activeMember.colorBody,
         colorText: activeMember.colorText
-      },
-      memberId: activeMember.id,
+      } : DEFAULT_NOTE_COLORS,
+      memberId: activeMember?.id,
       position: {
         x: e.clientX + scrollX,
         y: e.clientY + scrollY
@@ -56,14 +50,8 @@ const NotesPage: FC = () => {
       <Controls 
         className="controls" 
         onActiveMemberChange={setActiveMember}
+        activeMember={activeMember}
       />
-      <Suspense fallback={null}>
-        <ErrorModal
-          isOpen={showError}
-          message="Please select a member color before creating a note."
-          onClose={() => setShowError(false)}
-        />
-      </Suspense>
     </div>
   );
 };

@@ -2,23 +2,23 @@ import React, { FC, useState, MouseEvent, Suspense, lazy } from 'react';
 import styled from 'styled-components';
 import Button from './Button';
 import Color from './Color';
-import { useMembers } from '../services/useMembers';
+import { useMembers } from '../context/GlobalMembersContext';
 import { Member } from '../utils/types';
 
-const AddMemberModal = lazy(() => import('./modals/AddMemberModal'));
+const AddMemberModal = lazy(() => import('./AddMemberModal'));
 
 interface ControlsProps {
     className?: string;
     onActiveMemberChange: (member: Member | null) => void;
+    activeMember: Member | null;
 }
 
-const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange }) => {
+const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMember }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [activeMember, setActiveMember] = useState<Member | null>(null);
     const { members, addMember } = useMembers();
 
     const handleAddMember = (e: MouseEvent) => {
-        e.stopPropagation(); // Prevent click from reaching NotesPage
+        e.stopPropagation();
         setIsModalOpen(true);
     };
 
@@ -28,7 +28,6 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange }) => {
 
     const handleMemberClick = (member: Member) => {
         const newActiveMember = activeMember?.id === member.id ? null : member;
-        setActiveMember(newActiveMember);
         onActiveMemberChange(newActiveMember);
     };
 

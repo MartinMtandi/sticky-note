@@ -1,12 +1,13 @@
 import { FC, useCallback, useRef, useEffect, useState, MouseEvent } from 'react'
 import styled from 'styled-components'
-import { Note, NoteColors } from '../utils/types';
+import { Note, NoteColors, Member } from '../utils/types';
 import { autoGrow, setZIndex } from '../utils';
-import { useNotes } from '../services/useNotes';
-import { useMembers } from '../services/useMembers';
+import { useNotes } from '../context/GlobalNotesContext';
+import { useMembers } from '../context/GlobalMembersContext';
 import Spinner from '../icons/Spinner';
 import Button from './Button';
 import Checkbox from './Checkbox';
+import MenuIcon from '../icons/MenuIcon';
 import { PRIORITY_COLORS, Priority } from '../utils/constants';
 
 interface StyledProps {
@@ -23,19 +24,125 @@ interface NoteCardProps {
     onDelete: () => void;
 }
 
+const MemberSelector = styled.div<{ $show: boolean }>`
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    padding: 0.5rem;
+    display: ${props => props.$show ? 'flex' : 'none'};
+    flex-direction: column;
+    gap: 0.5rem;
+    z-index: 10001;
+`;
+
+const MemberOption = styled.div<{ $color: string; $bodyColor: string; $textColor: string; $isActive: boolean }>`
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: ${props => props.$color};
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    box-shadow: ${props => props.$isActive ? '0 0 0 2px white, 0 0 0 4px ' + props.$color : 'none'};
+
+    &:hover {
+        transform: scale(1.1);
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        left: calc(100% + 4px);
+        top: 50%;
+        transform: translateY(-50%);
+        border: 6px solid transparent;
+        border-right-color: ${props => props.$bodyColor};
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    &::after {
+        content: attr(data-name);
+        position: absolute;
+        left: calc(120% + 6px);
+        top: 50%;
+        transform: translateY(-50%);
+        white-space: nowrap;
+        font-size: 14px;
+        font-weight: 500;
+        background-color: ${props => props.$bodyColor};
+        color: ${props => props.$textColor};
+        padding: 4px 8px;
+        border-radius: 4px;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    &:hover::before,
+    &:hover::after {
+        opacity: 1;
+    }
+`;
+
+const UnassignOption = styled.div`
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    opacity: 0.5;
+
+    &:hover {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+
+    &::after {
+        content: 'Unassign';
+        position: absolute;
+        left: calc(120% + 6px);
+        top: 50%;
+        transform: translateY(-50%);
+        white-space: nowrap;
+        font-size: 14px;
+        font-weight: 500;
+        background-color: #666;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    &:hover::after {
+        opacity: 1;
+    }
+`;
+
 const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
-    const { body, colors, priority, completed } = note;
+    const { body, colors, priority, completed, memberId } = note;
     const [pos, setPos] = useState<CardStyledProps['$position']>(note.position);
     const [saving, setSaving] = useState<boolean>(false);
     const [currentPriority, setCurrentPriority] = useState<Priority | undefined>(priority);
     const [isCompleted, setIsCompleted] = useState<boolean>(completed || false);
+    const [showMemberSelector, setShowMemberSelector] = useState(false);
     const keyUpTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const mouseStartPos = useRef<CardStyledProps['$position']>({ x: 0, y: 0 });
     const lastMousePos = useRef<CardStyledProps['$position']>({ x: 0, y: 0 });
     const cardRef = useRef<HTMLDivElement>(null);
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const { updateNote } = useNotes();
-    const { getMember } = useMembers();
+    const { getMember, members } = useMembers();
+
+    // Get current member
+    const currentMember = memberId ? getMember(memberId) : null;
 
     // Define completed colors
     const completedColors = {
@@ -51,10 +158,25 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
         autoGrow(textAreaRef);
     }, []);
 
+    useEffect(() => {
+        const handleClickOutside = (event: globalThis.MouseEvent) => {
+            if (showMemberSelector && cardRef.current && !cardRef.current.contains(event.target as Node)) {
+                setShowMemberSelector(false);
+            }
+        };
+
+        if (showMemberSelector) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [showMemberSelector]);
+
     const handleKeyUp = () => {
         setSaving(true);
 
-        //If we have a timer id, clear it so we can add another two seconds
         if (keyUpTimer.current) {
             clearTimeout(keyUpTimer.current);
         }
@@ -69,12 +191,26 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
     }
 
     const handleDelete = async (e: MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
-        e.stopPropagation(); // Prevent triggering mouseDown event
+        e.stopPropagation();
         await onDelete();
     }
 
+    const handleMemberSelect = (memberId: string | undefined, memberColors?: NoteColors) => {
+        updateNote({
+            ...note,
+            memberId,
+            colors: memberColors || colors // Keep current colors if unassigning
+        });
+        setShowMemberSelector(false);
+    };
+
+    const toggleMemberSelector = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setShowMemberSelector(!showMemberSelector);
+    };
+
     const cyclePriority = (e: MouseEvent) => {
-        e.stopPropagation(); // Prevent triggering mouseDown event
+        e.stopPropagation(); 
         const priorities: Priority[] = ['HIGH', 'MEDIUM', 'LOW'];
         const currentIndex = currentPriority ? priorities.indexOf(currentPriority) : -1;
         const nextPriority = currentIndex === priorities.length - 1 ? undefined : priorities[(currentIndex + 1) % priorities.length];
@@ -118,7 +254,6 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
             y: lastMousePos.current.y + dy
         };
     
-        // Update note with final calculated position
         updateNote({
             ...note,
             position: finalPos
@@ -137,8 +272,7 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
     }, [pos, mouseMove, mouseUp]); 
 
     // Get member name from memberId
-    const member = note.memberId ? getMember(note.memberId) : null;
-    const memberName = member?.name || 'Unassigned';
+    const memberName = currentMember?.name || 'Unassigned';
 
     return (
         <Card
@@ -158,6 +292,34 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
                         <SavingText $colors={currentColors}>Saving...</SavingText>
                     </SavingIndicator>
                 )}
+                <div style={{ position: 'relative' }}>
+                    <MenuIcon onClick={toggleMemberSelector} />
+                    <MemberSelector $show={showMemberSelector}>
+                        {members.map((member: Member) => (
+                            <MemberOption
+                                key={member.id}
+                                $color={member.colorHeader}
+                                $bodyColor={member.colorBody}
+                                $textColor={member.colorText}
+                                $isActive={member.id === note.memberId}
+                                onClick={() => handleMemberSelect(
+                                    member.id === note.memberId ? undefined : member.id,
+                                    member.id === note.memberId ? undefined : {
+                                        colorHeader: member.colorHeader,
+                                        colorBody: member.colorBody,
+                                        colorText: member.colorText
+                                    }
+                                )}
+                                data-name={member.name}
+                            />
+                        ))}
+                        {note.memberId && (
+                            <UnassignOption
+                                onClick={() => handleMemberSelect(undefined)}
+                            />
+                        )}
+                    </MemberSelector>
+                </div>
             </CardHeader>
             <CardBody>
                 <TextArea
@@ -254,13 +416,17 @@ const TextArea = styled.textarea<StyledProps>`
 `
 
 const CardHeader = styled.div<StyledProps>`
-    background-color: ${props => props.$colors.colorHeader}; 
-    border-radius: 5px 5px 0 0;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 5px;
-`
+    padding: 0.5em;
+    background-color: ${props => props.$colors.colorHeader};
+    border-radius: 5px 5px 0 0;
+    position: relative;
+
+    > :first-child {
+        margin-right: auto;
+    }
+`;
 
 const CardFooter = styled.div<StyledProps>`
     background-color: ${props => props.$colors.colorBody};
@@ -306,7 +472,10 @@ const PriorityDot = styled.div<{ $color: string }>`
 const SavingIndicator = styled.div`
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.5em;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 `;
 
 const SavingText = styled.span<StyledProps>`
