@@ -22,6 +22,10 @@ const initialNotes: Note[] = [
           '4. Assign Priority:\n' +
           '   • Click on the dot next to the Member name on the note\n' +
           '   • This will toggle between different Priority states\n\n' +
+          '5. Assign Notes:\n' +
+          '   • Click the menu button on the top right corner of the note\n' +
+          '   • This will open a menu that allows you to assign the note to a member.\n' +
+          '   • You need to have a member(s) added before you can assign a note to a member.\n\n' +
           'Try it out! Drag me around and create more notes!',
     colors: DEFAULT_NOTE_COLORS,
     position: { x: 300, y: 50 }

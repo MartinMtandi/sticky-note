@@ -61,6 +61,9 @@ npm install
 npm run dev
 ```
 
+### Test URL
+https://sticky-note-roan.vercel.app/
+
 ### Core Features
 1. Add members with custom colors
 2. Select member (shows white outline)
@@ -92,6 +95,11 @@ Welcome to Sticky Notes! 📝
 4. Assign Priority:
    • Click on the dot next to the Member name on the note
    • This will toggle between different Priority states
+
+5. Assign Notes:
+   • Click the menu button on the top right corner of the note
+   • This will open a menu that allows you to assign the note to a member.
+   • You need to have a member(s) added before you can assign a note to a member.
 
 Try it out! Drag me around and create more notes!
 ```
