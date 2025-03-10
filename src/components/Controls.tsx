@@ -39,7 +39,11 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
     return (
         <ControlsContainer className={className}>
             <Button variant="add" onClick={handleAddMember} />
-            <Button variant="search" onClick={handleSearch} />
+            {members.length > 1 && (
+                <ButtonWrapper>
+                    <Button variant="search" onClick={handleSearch} />
+                </ButtonWrapper>
+            )}
             {members.map((member) => (
                 <Color
                     key={member.id}
@@ -75,6 +79,10 @@ const ControlsContainer = styled.div`
                     0.075), 0 4px 4px hsl(0deg 0% 0% / 0.075), 0 8px 8px hsl(0deg
                     0% 0% / 0.075), 0 16px 16px hsl(0deg 0% 0% / 0.075);
     z-index: 10000;
+`;
+
+const ButtonWrapper = styled.div`
+    border-top: 1px solid #cccc;
 `;
 
 export default React.memo(Controls);
