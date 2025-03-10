@@ -1,25 +1,28 @@
-import React, { useState } from 'react';
+import React, { useCallback } from 'react';
 import styled from 'styled-components';
-import { Note } from '../utils/types';
+import { Member, Note } from '../utils/types';
 
 interface SearchTaskProps {
   notes: Note[];
   onSearch: (filteredNotes: Note[]) => void;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+  setActiveMember: (member: Member | null) => void;
 }
 
-const SearchTask: React.FC<SearchTaskProps> = ({ notes, onSearch }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+const SearchTask: React.FC<SearchTaskProps> = ({ notes, onSearch, searchQuery, setSearchQuery, setActiveMember }) => {
 
-  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
+    setActiveMember(null);
   
     if (!query.trim()) {
       onSearch([]); // Clear queriedNotes when search is empty
     } else {
       onSearch(notes.filter(note => note.body.toLowerCase().includes(query.toLowerCase())));
     }
-  };
+  }, [notes, onSearch, setSearchQuery, setActiveMember]);
   
 
   return (

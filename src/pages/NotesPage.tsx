@@ -24,6 +24,7 @@ const NotesPage: FC = () => {
   const { notes, addNote, deleteNote } = useNotes();
   const [activeMember, setActiveMember] = useState<Member | null>(null);
   const [queriedNotes, setQueriedNotes] = useState<Note[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   
   const handlePageClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     // Don't create note if clicking on a note or controls
@@ -55,18 +56,25 @@ const NotesPage: FC = () => {
 
   // Filter notes based on active member
   const filteredNotes = useMemo(() => {
+    if(activeMember){
+      setQueriedNotes([]);
+      setSearchQuery('');
+    }
     return notes.filter(note => !activeMember || note.memberId === activeMember.id);
   }, [notes, activeMember]);
 
   const displayedNotes = queriedNotes.length > 0 ? queriedNotes : filteredNotes;
 
-  
   return (
     <PageContainer onClick={handlePageClick}>
-       <SearchTask 
-        notes={notes}
-        onSearch={setQueriedNotes}
-      />
+      {notes.length > 0 && (
+        <SearchTask 
+          notes={notes}
+          onSearch={setQueriedNotes}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+        setActiveMember={setActiveMember}
+      />)}
       {displayedNotes.map((note: Note) => (
         <NoteCard key={note.$id} note={note} onDelete={() => deleteNote(note.$id)} />
       ))}
