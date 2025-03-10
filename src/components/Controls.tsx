@@ -121,6 +121,7 @@ const ControlsContainer = styled.div`
 const ButtonWrapper = styled.div`
     border-top: 1px solid #cccc;
     position: relative;
+    padding-top: 1rem;
 `;
 
 const FloatingSearchBox = styled.div`

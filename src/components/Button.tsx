@@ -82,7 +82,6 @@ const StyledButton = styled.button<{ $variant: ButtonProps['variant']; $darkMode
                     will-change: transform, box-shadow;
                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                     border: none;
-                    margin-top: 1rem;
                     color: white;
 
                     &:hover {

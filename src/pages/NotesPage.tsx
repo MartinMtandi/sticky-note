@@ -73,8 +73,9 @@ const NotesPage: FC = () => {
           onSearch={setQueriedNotes}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
-        setActiveMember={setActiveMember}
-      />)}
+          setActiveMember={setActiveMember}
+        />
+      )}
       {displayedNotes.map((note: Note) => (
         <NoteCard key={note.$id} note={note} onDelete={() => deleteNote(note.$id)} />
       ))}
