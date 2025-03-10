@@ -4,9 +4,10 @@ import Typography from './Typography';
 import Plus from '../icons/Plus';
 import Trash from '../icons/Trash';
 import Close from '../icons/Close';
+import { SearchIcon } from '../icons/Search';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-    variant: 'primary' | 'secondary' | 'add' | 'delete' | 'close';
+    variant: 'primary' | 'secondary' | 'add' | 'delete' | 'close' | 'search';
     darkMode?: boolean;
 }
 
@@ -46,6 +47,14 @@ const Button: FC<ButtonProps> = ({
         );
     }
 
+    if (variant === 'search') {
+        return (
+            <StyledButton as="button" aria-label="Search" $variant={variant} onClick={handleClick} {...props}>
+                <SearchIcon />
+            </StyledButton>
+        );
+    }
+
     return (
         <StyledButton $variant={variant} onClick={handleClick} {...props}>
             <Typography variant="body2" color={variant === 'primary' ? 'white' : undefined}>
@@ -59,6 +68,7 @@ const StyledButton = styled.button<{ $variant: ButtonProps['variant']; $darkMode
     ${({ $variant, $darkMode }) => {
         switch ($variant) {
             case 'add':
+            case 'search':
                 return `
                     background-color: rgba(107, 107, 107, 1);
                     display: flex;
@@ -72,6 +82,8 @@ const StyledButton = styled.button<{ $variant: ButtonProps['variant']; $darkMode
                     will-change: transform, box-shadow;
                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                     border: none;
+                    margin-top: 1rem;
+                    color: white;
 
                     &:hover {
                         transform: scale(1.1);
