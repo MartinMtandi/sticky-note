@@ -66,49 +66,16 @@ https://sticky-note-roan.vercel.app/
 
 ### Core Features
 1. Add members with custom colors
-2. Select member (shows white outline)
-3. Create notes (inherits member colors)
-4. Set priorities (low/medium/high)
-5. Filter by member
+2. Create notes (inherits member colors)
+3. Set priorities (low/medium/high)
+4. Filter by member
+5. Filter by notes body
 6. Mark notes complete
-
-### Welcome Note
-When you first open the application, you'll see a welcome note:
-
-```
-Welcome to Sticky Notes! 📝
-
-🎯 Quick Tips:
-
-1. Add Team Members:
-   • Click the "+" button
-   • Enter their name and pick a color
-
-2. Add a New Note:
-   • Select a member color on the Control panel and click anywhere on the canvas
-
-3. Filter Notes by Member:
-   • Click a member's color
-   • The notes will be filtered to show only notes assigned to that member
-   • To remove the filter select the same member again
-
-4. Assign Priority:
-   • Click on the dot next to the Member name on the note
-   • This will toggle between different Priority states
-
-5. Assign Notes:
-   • Click the menu button on the top right corner of the note
-   • This will open a menu that allows you to assign the note to a member.
-   • You need to have a member(s) added before you can assign a note to a member.
-
-Try it out! Drag me around and create more notes!
-```
-
-This note demonstrates:
-- Draggable functionality
-- Member color styling
-- Priority system
-- Interactive instructions
+7. Assign notes to members
+8. Drag notes to reorder
+9. Delete notes
+10. Save notes to local storage
+11. Search member
 
 ## Performance
 
@@ -133,6 +100,11 @@ This note demonstrates:
 3. Categories/tags
 4. Search functionality
 5. Note sharing
+6. Member management
+7. Note history
+8. Note notifications
+9. Note reminders
+10. Note collaboration
 
 ### Technical
 1. Real-time collaboration
