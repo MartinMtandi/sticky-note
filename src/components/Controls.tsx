@@ -1,9 +1,10 @@
-import React, { FC, useState, MouseEvent, Suspense, lazy, useMemo } from 'react';
+import React, { FC, useState, MouseEvent, Suspense, lazy } from 'react';
 import styled from 'styled-components';
 import Button from './Button';
 import Color from './Color';
 import { useMembers } from '../context/GlobalMembersContext';
 import { Member } from '../utils/types';
+import SearchBox from './SearchBox';
 
 const AddMemberModal = lazy(() => import('./AddMemberModal'));
 
@@ -18,13 +19,6 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
     const { members, addMember } = useMembers();
     const [searchVisible, setSearchVisible] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
-
-    const filteredMembers = useMemo(() => {
-        if (!searchQuery) return [];
-        return members.filter(member => 
-            member.name.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-    }, [members, searchQuery]);
 
     const handleAddMember = (e: MouseEvent) => {
         e.stopPropagation();
@@ -46,11 +40,6 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
         setSearchQuery('');
     };
 
-    const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        e.stopPropagation();
-        setSearchQuery(e.target.value);
-    };
-
     return (
         <ControlsContainer onClick={(e) => e.stopPropagation()}  data-type="control-container" className={className}>
             <Button variant="add" onClick={handleAddMember} />
@@ -58,26 +47,18 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
                 <ButtonWrapper>
                     <Button variant="search" onClick={handleSearchClick} />
                     {searchVisible && (
-                        <FloatingSearchBox onClick={(e) => e.stopPropagation()}>
-                            <SearchInput
-                                type="text"
-                                placeholder="Search members..."
-                                value={searchQuery}
-                                onChange={handleSearchInputChange}
-                                autoFocus
-                            />
-                            <MemberList>
-                                {filteredMembers.map((member) => (
-                                    <MemberListItem key={member.id} onClick={() => {
-                                        handleMemberClick(member); 
-                                        setSearchVisible(false);
-                                    }}>
-                                        <ColorDot $color={member.colorHeader} />
-                                        <MemberName>{member.name}</MemberName>
-                                    </MemberListItem>
-                                ))}
-                            </MemberList>
-                        </FloatingSearchBox>
+                        <SearchBox
+                        data={members}
+                        searchQuery={searchQuery}
+                        setSearchQuery={setSearchQuery}
+                        onSearch={() => {
+                            // No need for a separate state setter, just update `searchQuery`
+                            setSearchQuery(searchQuery);
+                          }}
+                        placeholder="Search members..."
+                        floating
+                        filterFunction={(member, query) => member.name.toLowerCase().includes(query.toLowerCase())}
+                      />
                     )}
                 </ButtonWrapper>
             )}
@@ -122,67 +103,6 @@ const ButtonWrapper = styled.div`
     border-top: 1px solid #cccc;
     position: relative;
     padding-top: 1rem;
-`;
-
-const FloatingSearchBox = styled.div`
-    position: absolute;
-    top: 0;
-    left: 5em;
-    background: #35363e;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    z-index: 10000;
-    width: 300px;
-
-    onClick={(e) => e.stopPropagation()}
-`;
-
-const SearchInput = styled.input`
-    width: calc(300px - 1rem);
-    padding: 0.5rem;
-    border-radius: 4px;
-    border: none;
-    background: #2a2b32;
-    color: white;
-    font-size: 0.875rem;
-
-    &:focus {
-        outline: none;
-        box-shadow: 0 0 0 2px #4d79ff;
-    }
-`;
-
-const MemberList = styled.div`
-  margin-top: 1rem;
-  max-height: 200px;
-  overflow-y: auto;
-`;
-
-const MemberListItem = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 0.5rem;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background 0.2s ease;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.1);
-  }
-`;
-
-const ColorDot = styled.div<{ $color: string }>`
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: ${props => props.$color};
-  margin: 0.5rem;
-`;
-
-const MemberName = styled.span`
-  color: white;
-  font-size: 0.875rem;
 `;
 
 export default React.memo(Controls);
