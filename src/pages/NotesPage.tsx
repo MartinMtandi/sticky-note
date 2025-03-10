@@ -7,6 +7,7 @@ import Controls from '../components/Controls';
 import { DEFAULT_NOTE_COLORS } from '../utils/constants';
 import PlusIcon from '../icons/PlusIcon';
 import { svgToCursor } from '../utils';
+import SearchTask from '../components/SearchTask';
 
 // Pre-generate cursor URL for better performance
 // Using a larger plus icon (24px) for better visibility
@@ -22,6 +23,7 @@ const PLUS_CURSOR = svgToCursor(
 const NotesPage: FC = () => {
   const { notes, addNote, deleteNote } = useNotes();
   const [activeMember, setActiveMember] = useState<Member | null>(null);
+  const [queriedNotes, setQueriedNotes] = useState<Note[]>([]);
   
   const handlePageClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     // Don't create note if clicking on a note or controls
@@ -58,6 +60,13 @@ const NotesPage: FC = () => {
   
   return (
     <PageContainer onClick={handlePageClick}>
+       <SearchTask 
+        notes={notes}
+        onSearch={setQueriedNotes}
+      />
+      {queriedNotes.map((note: Note) => (
+        <NoteCard key={note.$id} note={note} onDelete={() => deleteNote(note.$id)} />
+      ))}
       {filteredNotes.map((note: Note) => (
         <NoteCard key={note.$id} note={note} onDelete={() => deleteNote(note.$id)} />
       ))}
