@@ -31,9 +31,15 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
         onActiveMemberChange(newActiveMember);
     };
 
+    const handleSearch = (e: MouseEvent) => {
+        e.stopPropagation();
+        // Search functionality will be implemented later
+    };
+
     return (
         <ControlsContainer className={className}>
             <Button variant="add" onClick={handleAddMember} />
+            <Button variant="search" onClick={handleSearch} />
             {members.map((member) => (
                 <Color
                     key={member.id}
