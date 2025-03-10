@@ -20,7 +20,7 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
     const [searchQuery, setSearchQuery] = useState('');
 
     const filteredMembers = useMemo(() => {
-        if (!searchQuery) return members;
+        if (!searchQuery) return [];
         return members.filter(member => 
             member.name.toLowerCase().includes(searchQuery.toLowerCase())
         );
@@ -40,12 +40,14 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
         onActiveMemberChange(newActiveMember);
     };
 
-    const handleSearchClick = () => {
+    const handleSearchClick = (e: MouseEvent) => {
+        e.stopPropagation();
         setSearchVisible(prev => !prev);
         setSearchQuery('');
     };
 
     const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        e.stopPropagation();
         setSearchQuery(e.target.value);
     };
 
@@ -128,6 +130,8 @@ const FloatingSearchBox = styled.div`
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     z-index: 10000;
     width: 300px;
+
+    onClick={(e) => e.stopPropagation()}
 `;
 
 const SearchInput = styled.input`
