@@ -1,4 +1,4 @@
-import React, { FC, useState, MouseEvent, Suspense, lazy } from 'react';
+import React, { FC, useState, MouseEvent, Suspense, lazy, useMemo } from 'react';
 import styled from 'styled-components';
 import Button from './Button';
 import Color from './Color';
@@ -16,6 +16,15 @@ interface ControlsProps {
 const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMember }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { members, addMember } = useMembers();
+    const [searchVisible, setSearchVisible] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const filteredMembers = useMemo(() => {
+        if (!searchQuery) return members;
+        return members.filter(member => 
+            member.name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }, [members, searchQuery]);
 
     const handleAddMember = (e: MouseEvent) => {
         e.stopPropagation();
@@ -31,9 +40,13 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
         onActiveMemberChange(newActiveMember);
     };
 
-    const handleSearch = (e: MouseEvent) => {
-        e.stopPropagation();
-        // Search functionality will be implemented later
+    const handleSearchClick = () => {
+        setSearchVisible(prev => !prev);
+        setSearchQuery('');
+    };
+
+    const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(e.target.value);
     };
 
     return (
@@ -41,7 +54,26 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
             <Button variant="add" onClick={handleAddMember} />
             {members.length > 1 && (
                 <ButtonWrapper>
-                    <Button variant="search" onClick={handleSearch} />
+                    <Button variant="search" onClick={handleSearchClick} />
+                    {searchVisible && (
+                        <FloatingSearchBox>
+                            <SearchInput
+                                type="text"
+                                placeholder="Search members..."
+                                value={searchQuery}
+                                onChange={handleSearchInputChange}
+                                autoFocus
+                            />
+                            {filteredMembers.map((member) => (
+                                <Color
+                                    key={member.id}
+                                    member={member}
+                                    isActive={activeMember?.id === member.id}
+                                    onClick={() => handleMemberClick(member)}
+                                />
+                            ))}
+                        </FloatingSearchBox>
+                    )}
                 </ButtonWrapper>
             )}
             {members.map((member) => (
@@ -83,6 +115,34 @@ const ControlsContainer = styled.div`
 
 const ButtonWrapper = styled.div`
     border-top: 1px solid #cccc;
+    position: relative;
+`;
+
+const FloatingSearchBox = styled.div`
+    position: absolute;
+    top: 0;
+    left: 5em;
+    background: #35363e;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10000;
+    width: 300px;
+`;
+
+const SearchInput = styled.input`
+    width: calc(300px - 1rem);
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: none;
+    background: #2a2b32;
+    color: white;
+    font-size: 0.875rem;
+
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px #4d79ff;
+    }
 `;
 
 export default React.memo(Controls);
