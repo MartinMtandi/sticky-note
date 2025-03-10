@@ -64,14 +64,14 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
                                 onChange={handleSearchInputChange}
                                 autoFocus
                             />
-                            {filteredMembers.map((member) => (
-                                <Color
-                                    key={member.id}
-                                    member={member}
-                                    isActive={activeMember?.id === member.id}
-                                    onClick={() => handleMemberClick(member)}
-                                />
-                            ))}
+                            <MemberList>
+                                {filteredMembers.map((member) => (
+                                    <MemberListItem key={member.id} onClick={() => handleMemberClick(member)}>
+                                        <ColorDot $color={member.colorHeader} />
+                                        <MemberName>{member.name}</MemberName>
+                                    </MemberListItem>
+                                ))}
+                            </MemberList>
                         </FloatingSearchBox>
                     )}
                 </ButtonWrapper>
@@ -143,6 +143,38 @@ const SearchInput = styled.input`
         outline: none;
         box-shadow: 0 0 0 2px #4d79ff;
     }
+`;
+
+const MemberList = styled.div`
+  margin-top: 1rem;
+  max-height: 200px;
+  overflow-y: auto;
+`;
+
+const MemberListItem = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+`;
+
+const ColorDot = styled.div<{ $color: string }>`
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: ${props => props.$color};
+  margin: 0.5rem;
+`;
+
+const MemberName = styled.span`
+  color: white;
+  font-size: 0.875rem;
 `;
 
 export default React.memo(Controls);
