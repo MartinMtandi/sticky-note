@@ -1,4 +1,10 @@
-import { RefObject } from 'react';
+import { ReactElement, RefObject } from 'react';
+import { renderToString } from 'react-dom/server';
+
+export const svgToCursor = (component: ReactElement): string => {
+    const svgString = renderToString(component);
+    return `data:image/svg+xml;base64,${btoa(svgString)}`;
+};
 
 export const autoGrow = (ref: RefObject<HTMLTextAreaElement>) => {
     if (ref?.current) {
