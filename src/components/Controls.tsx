@@ -68,7 +68,10 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
                             />
                             <MemberList>
                                 {filteredMembers.map((member) => (
-                                    <MemberListItem key={member.id} onClick={() => handleMemberClick(member)}>
+                                    <MemberListItem key={member.id} onClick={() => {
+                                        handleMemberClick(member); 
+                                        setSearchVisible(false);
+                                    }}>
                                         <ColorDot $color={member.colorHeader} />
                                         <MemberName>{member.name}</MemberName>
                                     </MemberListItem>
