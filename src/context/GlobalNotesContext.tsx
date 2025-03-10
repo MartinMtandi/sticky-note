@@ -7,26 +7,14 @@ const STORAGE_KEY = 'sticky-notes-data';
 const initialNotes: Note[] = [
   {
     $id: 1,
-    body: 'Welcome to Sticky Notes! 📝\n\n' +
-          '🎯 Quick Tips:\n\n' +
-          '1. Add Team Members:\n' +
-          '   • Click the "+" button\n' +
-          '   • Enter their name and pick a color\n\n' +
-          '2. Add a New Note:\n' +
-          '   • Click anywhere on the canvas to create an unassigned note\n' +
-          '   • Or select a member color first to create an assigned note\n\n' +
-          '3. Filter Notes by Member:\n' +
-          '   • Click a member\'s color\n' +
-          '   • The notes will be filtered to show only notes assigned to that member\n' +
-          '   • To remove the filter select the same member again\n\n' +
-          '4. Assign Priority:\n' +
-          '   • Click on the dot next to the Member name on the note\n' +
-          '   • This will toggle between different Priority states\n\n' +
-          '5. Assign Notes:\n' +
-          '   • Click the menu button on the top right corner of the note\n' +
-          '   • This will open a menu that allows you to assign the note to a member.\n' +
-          '   • You need to have a member(s) added before you can assign a note to a member.\n\n' +
-          'Try it out! Drag me around and create more notes!',
+    body: "Welcome to Sticky Notes! 📝\n\n" +
+      "🎯 Quick Tips:\n\n" +
+      "• Add Members: Click \"+\" → Enter name & pick a color.\n" +
+      "• Create Notes: Click anywhere or select a member first.\n" +
+      "• Filter Notes: Click a member's color to show/hide their notes.\n" +
+      "• Set Priority: Click the Priority Pill to toggle.\n" +
+      "• Assign Notes: Use the menu button on a note (members required).\n\n" +
+      "Try it out! Drag me around & add more notes!",
     colors: DEFAULT_NOTE_COLORS,
     position: { x: 300, y: 50 }
   }
