@@ -52,13 +52,13 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
     };
 
     return (
-        <ControlsContainer className={className}>
+        <ControlsContainer onClick={(e) => e.stopPropagation()}  data-type="control-container" className={className}>
             <Button variant="add" onClick={handleAddMember} />
             {members.length > 1 && (
                 <ButtonWrapper>
                     <Button variant="search" onClick={handleSearchClick} />
                     {searchVisible && (
-                        <FloatingSearchBox>
+                        <FloatingSearchBox onClick={(e) => e.stopPropagation()}>
                             <SearchInput
                                 type="text"
                                 placeholder="Search members..."
