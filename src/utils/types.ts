@@ -29,3 +29,13 @@ export interface Member extends NoteColors {
     id: string;
     name: string;
 }
+
+export interface SearchBoxProps<T> {
+    data: T[];
+    searchQuery: string;
+    setSearchQuery: (query: string) => void;
+    onSearch: (filteredData: T[]) => void;
+    placeholder: string;
+    floating?: boolean; // Controls floating behavior
+    filterFunction: (item: T, query: string) => boolean;
+}
