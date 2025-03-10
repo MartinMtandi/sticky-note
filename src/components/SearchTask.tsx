@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Note } from '../utils/types';
 
@@ -10,17 +10,17 @@ interface SearchTaskProps {
 const SearchTask: React.FC<SearchTaskProps> = ({ notes, onSearch }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredNotes = useMemo(() => {
-    if (!searchQuery.trim()) return notes;
-    return notes.filter(note => 
-      note.body.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [notes, searchQuery]);
-
   const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-    onSearch(filteredNotes);
+    const query = e.target.value;
+    setSearchQuery(query);
+  
+    if (!query.trim()) {
+      onSearch([]); // Clear queriedNotes when search is empty
+    } else {
+      onSearch(notes.filter(note => note.body.toLowerCase().includes(query.toLowerCase())));
+    }
   };
+  
 
   return (
     <SearchContainer onClick={(e) => e.stopPropagation()}>

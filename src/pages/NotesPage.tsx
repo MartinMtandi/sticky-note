@@ -57,6 +57,9 @@ const NotesPage: FC = () => {
   const filteredNotes = useMemo(() => {
     return notes.filter(note => !activeMember || note.memberId === activeMember.id);
   }, [notes, activeMember]);
+
+  const displayedNotes = queriedNotes.length > 0 ? queriedNotes : filteredNotes;
+
   
   return (
     <PageContainer onClick={handlePageClick}>
@@ -64,10 +67,7 @@ const NotesPage: FC = () => {
         notes={notes}
         onSearch={setQueriedNotes}
       />
-      {queriedNotes.map((note: Note) => (
-        <NoteCard key={note.$id} note={note} onDelete={() => deleteNote(note.$id)} />
-      ))}
-      {filteredNotes.map((note: Note) => (
+      {displayedNotes.map((note: Note) => (
         <NoteCard key={note.$id} note={note} onDelete={() => deleteNote(note.$id)} />
       ))}
       <Controls 
