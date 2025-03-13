@@ -39,4 +39,6 @@ export interface SearchBoxProps<T> {
     floating?: boolean; // Controls floating behavior
     filterFunction: (item: T, query: string) => boolean;
     onResultClick?: (item: T) => void; // Optional callback when a search result is clicked
+    renderItem?: (item: T) => React.ReactNode; // Optional custom render function for search results
+    onToggle?: (isVisible: boolean) => void; // Optional callback when search visibility changes
 }
