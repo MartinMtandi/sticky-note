@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { SearchBoxProps } from "../utils/types";
 
-const SearchBox = <T,>({
+const SearchBox = <T extends { id: string; name: string; colorHeader: string }>({
   data,
   searchQuery,
   setSearchQuery,
@@ -10,6 +10,7 @@ const SearchBox = <T,>({
   placeholder,
   floating = false,
   filterFunction,
+  onResultClick,
 }: SearchBoxProps<T>) => {
   const inputRef = useRef<HTMLInputElement>(null);
   
@@ -34,6 +35,11 @@ const SearchBox = <T,>({
     [data, onSearch, setSearchQuery, filterFunction]
   );
 
+  // Filter members based on the search query
+  const filteredMembers = searchQuery.trim() 
+    ? data.filter(item => filterFunction(item, searchQuery)) 
+    : [];
+
   return (
     <SearchContainer $floating={floating} onClick={e => e.stopPropagation()}>
       <SearchInput
@@ -43,6 +49,24 @@ const SearchBox = <T,>({
         onChange={handleSearchInputChange}
         ref={inputRef}
       />
+      
+      {searchQuery.trim() !== "" && (
+        <ResultsContainer>
+          {filteredMembers.length > 0 ? (
+            filteredMembers.map((member) => (
+              <SearchResult 
+                key={member.id}
+                onClick={() => onResultClick && onResultClick(member)}
+              >
+                <MemberDot $color={member.colorHeader} />
+                <span>{member.name}</span>
+              </SearchResult>
+            ))
+          ) : (
+            <NoResults>No members found</NoResults>
+          )}
+        </ResultsContainer>
+      )}
     </SearchContainer>
   );
 };
@@ -75,6 +99,59 @@ const SearchInput = styled.input`
     outline: none;
     box-shadow: 0 0 0 2px #4d79ff;
   }
+`;
+
+const ResultsContainer = styled.div`
+  margin-top: 0.75rem;
+  max-height: 200px;
+  overflow-y: auto;
+  
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background-color: #555;
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background-color: #2a2b32;
+    border-radius: 4px;
+  }
+`;
+
+const SearchResult = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background-color: #2a2b32;
+  }
+  
+  span {
+    color: white;
+    font-size: 0.875rem;
+  }
+`;
+
+const MemberDot = styled.div<{ $color: string }>`
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: ${props => props.$color};
+  margin-right: 0.5rem;
+`;
+
+const NoResults = styled.div`
+  color: #9ca3af;
+  text-align: center;
+  padding: 0.5rem;
+  font-size: 0.875rem;
 `;
 
 export default SearchBox;
