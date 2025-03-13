@@ -46,108 +46,6 @@ const popIn = keyframes`
     }
 `;
 
-const MemberSelector = styled.div<{ $show: boolean }>`
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    padding: 0.5rem;
-    display: ${props => props.$show ? 'flex' : 'none'};
-    flex-direction: column;
-    gap: 0.5rem;
-    z-index: 10001;
-`;
-
-const MemberOption = styled.div<{ $color: string; $bodyColor: string; $textColor: string; $isActive: boolean }>`
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background-color: ${props => props.$color};
-    cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
-    box-shadow: ${props => props.$isActive ? '0 0 0 2px white, 0 0 0 4px ' + props.$color : 'none'};
-
-    &:hover {
-        transform: scale(1.1);
-    }
-
-    &::before {
-        content: '';
-        position: absolute;
-        left: calc(100% + 4px);
-        top: 50%;
-        transform: translateY(-50%);
-        border: 6px solid transparent;
-        border-right-color: ${props => props.$bodyColor};
-        opacity: 0;
-        transition: opacity 0.2s ease;
-    }
-
-    &::after {
-        content: attr(data-name);
-        position: absolute;
-        left: calc(120% + 6px);
-        top: 50%;
-        transform: translateY(-50%);
-        white-space: nowrap;
-        font-size: 14px;
-        font-weight: 500;
-        background-color: ${props => props.$bodyColor};
-        color: ${props => props.$textColor};
-        padding: 4px 8px;
-        border-radius: 4px;
-        opacity: 0;
-        transition: opacity 0.2s ease;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    &:hover::before,
-    &:hover::after {
-        opacity: 1;
-    }
-`;
-
-const UnassignOption = styled.div`
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background-color: #666;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
-    opacity: 0.5;
-
-    &:hover {
-        transform: scale(1.1);
-        opacity: 0.8;
-    }
-
-    &::after {
-        content: 'Unassign';
-        position: absolute;
-        left: calc(120% + 6px);
-        top: 50%;
-        transform: translateY(-50%);
-        white-space: nowrap;
-        font-size: 14px;
-        font-weight: 500;
-        background-color: #666;
-        color: white;
-        padding: 4px 8px;
-        border-radius: 4px;
-        opacity: 0;
-        transition: opacity 0.2s ease;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    &:hover::after {
-        opacity: 1;
-    }
-`;
-
 const NoteCard: FC<NoteCardProps> = ({ 
     note, 
     onDelete, 
@@ -506,6 +404,109 @@ const SavingIndicator = styled.div`
 const SavingText = styled.span<StyledProps>`
     color: ${props => props.$colors.colorText};
     font-size: 12px;
+`;
+
+
+const MemberSelector = styled.div<{ $show: boolean }>`
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    padding: 0.5rem;
+    display: ${props => props.$show ? 'flex' : 'none'};
+    flex-direction: column;
+    gap: 0.5rem;
+    z-index: 10001;
+`;
+
+const MemberOption = styled.div<{ $color: string; $bodyColor: string; $textColor: string; $isActive: boolean }>`
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: ${props => props.$color};
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    box-shadow: ${props => props.$isActive ? '0 0 0 2px white, 0 0 0 4px ' + props.$color : 'none'};
+
+    &:hover {
+        transform: scale(1.1);
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        left: calc(100% + 4px);
+        top: 50%;
+        transform: translateY(-50%);
+        border: 6px solid transparent;
+        border-right-color: ${props => props.$bodyColor};
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    &::after {
+        content: attr(data-name);
+        position: absolute;
+        left: calc(120% + 6px);
+        top: 50%;
+        transform: translateY(-50%);
+        white-space: nowrap;
+        font-size: 14px;
+        font-weight: 500;
+        background-color: ${props => props.$bodyColor};
+        color: ${props => props.$textColor};
+        padding: 4px 8px;
+        border-radius: 4px;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    &:hover::before,
+    &:hover::after {
+        opacity: 1;
+    }
+`;
+
+const UnassignOption = styled.div`
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    opacity: 0.5;
+
+    &:hover {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+
+    &::after {
+        content: 'Unassign';
+        position: absolute;
+        left: calc(120% + 6px);
+        top: 50%;
+        transform: translateY(-50%);
+        white-space: nowrap;
+        font-size: 14px;
+        font-weight: 500;
+        background-color: #666;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    &:hover::after {
+        opacity: 1;
+    }
 `;
 
 export default NoteCard;
