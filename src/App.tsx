@@ -1,23 +1,25 @@
-import { FC } from 'react'
-import styled from 'styled-components'
-import NotesPage from './pages/NotesPage'
+import { FC } from "react";
+import styled, { ThemeProvider } from "styled-components";
+import NotesPage from "./pages/NotesPage";
+import {defaultTheme as theme} from './utils/theme';
 
 const App: FC = () => {
   return (
-    <AppContainer>
-      <NotesPage />
-    </AppContainer>
-  )
-}
+    <ThemeProvider theme={theme}>
+      <AppContainer>
+        <NotesPage />
+      </AppContainer>
+    </ThemeProvider>
+  );
+};
 
 const AppContainer = styled.div`
-  background-color: #212228;
-  background-image: linear-gradient(#292a30 0.1em, transparent 0.1em),
-    linear-gradient(90deg, #292a30 0.1em, transparent 0.1em);
-  background-size: 4em 4em;
+  background-color: ${({theme}) => theme.colors.background};
+  background-image: ${({theme}) => theme.colors.linearGradiant};
+  background-size: ${({theme}) => theme.sizes.backgroundSize};
   height: 100vh;
   position: relative;
   overflow: auto;
-`
+`;
 
-export default App
+export default App;

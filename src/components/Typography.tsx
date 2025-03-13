@@ -34,70 +34,70 @@ const Typography: FC<TypographyProps> = ({
 
 const variantStyles = {
     h1: css`
-        font-size: 2.5rem;
-        line-height: 1.2;
+        font-size: ${({theme}) => theme.typography.fontSizes['4xl']};
+        line-height: ${({theme}) => theme.typography.lineHeights.tightest};
     `,
     h2: css`
-        font-size: 2rem;
-        line-height: 1.3;
+        font-size: ${({theme}) => theme.typography.fontSizes['3xl']};
+        line-height: ${({theme}) => theme.typography.lineHeights.tighter};
     `,
     h3: css`
-        font-size: 1.75rem;
-        line-height: 1.4;
+        font-size: ${({theme}) => theme.typography.fontSizes['2xl']};
+        line-height: ${({theme}) => theme.typography.lineHeights.tight};
     `,
     h4: css`
-        font-size: 1.5rem;
-        line-height: 1.4;
+        font-size: ${({theme}) => theme.typography.fontSizes.xl};
+        line-height: ${({theme}) => theme.typography.lineHeights.tight};
     `,
     subtitle1: css`
-        font-size: 1.25rem;
-        line-height: 1.5;
+        font-size: ${({theme}) => theme.typography.fontSizes.lg};
+        line-height: ${({theme}) => theme.typography.lineHeights.normal};
     `,
     subtitle2: css`
-        font-size: 1.125rem;
-        line-height: 1.5;
+        font-size: ${({theme}) => theme.typography.fontSizes.xm};
+        line-height: ${({theme}) => theme.typography.lineHeights.normal};
     `,
     body1: css`
-        font-size: 1rem;
-        line-height: 1.5;
+        font-size: ${({theme}) => theme.typography.fontSizes.md};
+        line-height: ${({theme}) => theme.typography.lineHeights.normal};
     `,
     body2: css`
-        font-size: 0.875rem;
-        line-height: 1.6;
+        font-size: ${({theme}) => theme.typography.fontSizes.sm};
+        line-height: ${({theme}) => theme.typography.lineHeights.relaxed};
     `,
     caption: css`
-        font-size: 0.75rem;
-        line-height: 1.5;
+        font-size: ${({theme}) => theme.typography.fontSizes.xs};
+        line-height: ${({theme}) => theme.typography.lineHeights.normal};
     `
 };
 
 const colorStyles = {
     primary: css`
-        color: #333333;
+        color: ${({theme}) => theme.colors.text.primary};
     `,
     secondary: css`
-        color: #666666;
+        color: ${({theme}) => theme.colors.text.secondary};
     `,
     error: css`
-        color: #d32f2f;
+        color: ${({theme}) => theme.colors.text.error};
     `,
     white: css`
-        color: #ffffff;
+        color: ${({theme}) => theme.colors.text.light};
     `
 };
 
 const weightStyles = {
     regular: css`
-        font-weight: 400;
+        font-weight: ${({theme}) => theme.typography.fontWeights.regular};
     `,
     medium: css`
-        font-weight: 500;
+        font-weight: ${({theme}) => theme.typography.fontWeights.medium};
     `,
     semibold: css`
-        font-weight: 600;
+        font-weight: ${({theme}) => theme.typography.fontWeights.semibold};
     `,
     bold: css`
-        font-weight: 700;
+        font-weight: ${({theme}) => theme.typography.fontWeights.bold};
     `
 };
 
