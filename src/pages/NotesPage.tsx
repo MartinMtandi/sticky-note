@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Note, Member } from '../utils/types';
 import NoteCard from '../components/NoteCard';
 import { useNotes } from '../context/GlobalNotesContext';
+import { useMembers } from '../context/GlobalMembersContext';
 import Controls from '../components/Controls';
 import { DEFAULT_NOTE_COLORS } from '../utils/constants';
 import PlusIcon from '../icons/PlusIcon';
@@ -22,16 +23,28 @@ const PLUS_CURSOR = svgToCursor(
 
 const NotesPage: FC = () => {
   const { notes, addNote, deleteNote } = useNotes();
+  const { getMember } = useMembers();
   const [activeMember, setActiveMember] = useState<Member | null>(null);
   const [queriedNotes, setQueriedNotes] = useState<Note[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
 
+  // Handle page click - also clears all search filters
   const handlePageClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     // Don't create note if clicking on a note or controls
     if ((e.target as HTMLElement).closest('.note-card, .controls')) {
       return;
     }
+
+    // Get the member to use for the new note (prefer the selected note's member over active member)
+    const memberToUse = selectedNote?.memberId 
+      ? getMember(selectedNote.memberId) || activeMember 
+      : activeMember;
+
+    // Clear all search filters
+    setSelectedNote(null);
+    setQueriedNotes([]);
+    setSearchQuery('');
 
     // Account for scroll position
     const scrollX = window.scrollX || window.pageXOffset;
@@ -41,25 +54,32 @@ const NotesPage: FC = () => {
     // All notes must have a priority, defaulting to MEDIUM
     addNote({
       body: '',
-      colors: activeMember ? {
-        colorHeader: activeMember.colorHeader,
-        colorBody: activeMember.colorBody,
-        colorText: activeMember.colorText
+      colors: memberToUse ? {
+        colorHeader: memberToUse.colorHeader,
+        colorBody: memberToUse.colorBody,
+        colorText: memberToUse.colorText
       } : DEFAULT_NOTE_COLORS,
-      memberId: activeMember?.id,
+      memberId: memberToUse?.id,
       position: {
         x: e.clientX + scrollX,
         y: e.clientY + scrollY
       },
       priority: 'MEDIUM'  // Default to MEDIUM priority (orange #FFA500)
     });
-  }, [addNote, activeMember]);
+  }, [addNote, activeMember, selectedNote, getMember]);
+
+  // Handle member selection - also deselects any selected note
+  const handleActiveMemberChange = useCallback((member: Member | null) => {
+    setActiveMember(member);
+    setSelectedNote(null); // Deselect note when member changes
+  }, []);
 
   // Filter notes based on active member
   const filteredNotes = useMemo(() => {
     if (activeMember) {
       setQueriedNotes([]);
       setSearchQuery('');
+      setSelectedNote(null);
     }
     return notes.filter(note => !activeMember || note.memberId === activeMember.id);
   }, [notes, activeMember]);
@@ -69,19 +89,14 @@ const NotesPage: FC = () => {
     setSelectedNote(note);
     setSearchQuery('');
     
-    // Optionally scroll to the selected note
-    if (note) {
-      const noteElement = document.getElementById(`note-${note.$id}`);
-      if (noteElement) {
-        noteElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        // Add a temporary highlight effect
-        noteElement.classList.add('highlighted');
-        setTimeout(() => {
-          noteElement.classList.remove('highlighted');
-        }, 2000);
+    // If the note has a member assigned, set that member as active
+    if (note.memberId) {
+      const noteMember = getMember(note.memberId);
+      if (noteMember) {
+        setActiveMember(noteMember);
       }
     }
-  }, []);
+  }, [getMember]);
 
   // Custom render function for note search results
   const renderNoteSearchResult = useCallback((note: Note) => {
@@ -96,7 +111,27 @@ const NotesPage: FC = () => {
     );
   }, []);
 
-  const displayedNotes = queriedNotes.length > 0 ? queriedNotes : filteredNotes;
+  // Handle search toggle (deselects note)
+  const handleSearchToggle = useCallback((isVisible: boolean) => {
+    // If search is being opened, deselect any selected note
+    if (isVisible) {
+      setSelectedNote(null);
+    }
+  }, []);
+
+  // Determine which notes to display
+  const displayedNotes = useMemo(() => {
+    if (selectedNote) {
+      // If a note is selected from search, only show that note
+      return [selectedNote];
+    } else if (queriedNotes.length > 0) {
+      // If there are search results, show those
+      return queriedNotes;
+    } else {
+      // Otherwise show filtered notes based on active member
+      return filteredNotes;
+    }
+  }, [selectedNote, queriedNotes, filteredNotes]);
 
   return (
     <PageContainer onClick={handlePageClick}>
@@ -112,6 +147,7 @@ const NotesPage: FC = () => {
           }
           onResultClick={handleSearchResultClick}
           renderItem={renderNoteSearchResult}
+          onToggle={handleSearchToggle}
         />
       )}
       {displayedNotes.map((note: Note) => (
@@ -120,12 +156,12 @@ const NotesPage: FC = () => {
           note={note} 
           onDelete={() => deleteNote(note.$id)} 
           id={`note-${note.$id}`}
-          className={`note-card ${selectedNote && selectedNote.$id === note.$id ? 'selected' : ''}`}
         />
       ))}
       <Controls
-        onActiveMemberChange={setActiveMember}
+        onActiveMemberChange={handleActiveMemberChange}
         activeMember={activeMember}
+        onSearchToggle={handleSearchToggle}
       />
     </PageContainer>
   );
@@ -145,22 +181,6 @@ const PageContainer = styled.div`
   /* Prevent cursor inheritance on disabled elements */
   & > *[disabled], & > *[aria-disabled="true"] {
     cursor: not-allowed;
-  }
-  
-  /* Highlighting for selected notes */
-  .note-card.selected, .note-card.highlighted {
-    box-shadow: 0 0 0 2px #4d79ff, 0 4px 8px rgba(0, 0, 0, 0.2);
-    z-index: 10;
-  }
-  
-  .highlighted {
-    animation: pulse 2s;
-  }
-  
-  @keyframes pulse {
-    0% { box-shadow: 0 0 0 2px #4d79ff, 0 4px 8px rgba(0, 0, 0, 0.2); }
-    50% { box-shadow: 0 0 0 4px #4d79ff, 0 8px 16px rgba(0, 0, 0, 0.3); }
-    100% { box-shadow: 0 0 0 2px #4d79ff, 0 4px 8px rgba(0, 0, 0, 0.2); }
   }
 `;
 

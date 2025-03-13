@@ -24,6 +24,7 @@ const SearchBox = <T extends SearchableItem>({
   filterFunction,
   onResultClick,
   renderItem,
+  onToggle,
 }: SearchBoxProps<T>) => {
   const inputRef = useRef<HTMLInputElement>(null);
   
@@ -32,7 +33,19 @@ const SearchBox = <T extends SearchableItem>({
     if (inputRef.current) {
       inputRef.current.focus();
     }
-  }, []);
+    
+    // Notify parent component that search box is visible
+    if (onToggle) {
+      onToggle(true);
+    }
+    
+    // Cleanup function to notify parent when search box is unmounted
+    return () => {
+      if (onToggle) {
+        onToggle(false);
+      }
+    };
+  }, [onToggle]);
 
   const handleSearchInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {

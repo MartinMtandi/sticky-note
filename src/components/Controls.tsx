@@ -12,9 +12,10 @@ interface ControlsProps {
     className?: string;
     onActiveMemberChange: (member: Member | null) => void;
     activeMember: Member | null;
+    onSearchToggle?: (isVisible: boolean) => void;
 }
 
-const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMember }) => {
+const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMember, onSearchToggle }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { members, addMember } = useMembers();
     const [searchVisible, setSearchVisible] = useState(false);
@@ -35,10 +36,23 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
         onActiveMemberChange(newActiveMember);
     }, [activeMember, onActiveMemberChange]);
 
+    // Update search visibility and notify parent component
+    const updateSearchVisibility = useCallback((isVisible: boolean) => {
+        setSearchVisible(isVisible);
+        if (onSearchToggle) {
+            onSearchToggle(isVisible);
+        }
+    }, [onSearchToggle]);
+
     const handleSearchClick = (e: MouseEvent) => {
         e.stopPropagation();
-        setSearchVisible(prev => !prev);
-        setSearchQuery('');
+        const newVisibility = !searchVisible;
+        updateSearchVisibility(newVisibility);
+        
+        if (!newVisibility) {
+            // Clear search query when closing
+            setSearchQuery('');
+        }
     };
 
     // Close search box when clicking outside
@@ -47,7 +61,7 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
         
         const handleClickOutside = (e: MouseEvent) => {
             if (searchButtonRef.current && !searchButtonRef.current.contains(e.target as Node)) {
-                setSearchVisible(false);
+                updateSearchVisibility(false);
             }
         };
         
@@ -55,7 +69,7 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
         return () => {
             document.removeEventListener('mousedown', handleClickOutside as unknown as EventListener);
         };
-    }, [searchVisible]);
+    }, [searchVisible, updateSearchVisibility]);
 
     const handleSearch = useCallback(() => {
         // This will be called when the search input changes
@@ -67,9 +81,9 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
         handleMemberClick(member);
         
         // Close the search box
-        setSearchVisible(false);
+        updateSearchVisibility(false);
         setSearchQuery('');
-    }, [handleMemberClick]);
+    }, [handleMemberClick, updateSearchVisibility]);
 
     return (
         <ControlsContainer onClick={(e) => e.stopPropagation()}  data-type="control-container" className={className}>
@@ -87,6 +101,7 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
                             floating={true}
                             filterFunction={(member, query) => member.name.toLowerCase().includes(query.toLowerCase())}
                             onResultClick={handleSearchResultClick}
+                            onToggle={updateSearchVisibility}
                         />
                     )}
                 </ButtonWrapper>
