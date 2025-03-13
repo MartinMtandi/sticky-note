@@ -4,7 +4,7 @@ import Color from '../Color';
 
 describe('Color Component', () => {
     const member = {
-        id: "1",
+        id: 1,
         name: 'John Doe',
         colorHeader: '#ff5733',
         colorBody: '#33c1ff',
