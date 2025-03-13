@@ -1,4 +1,4 @@
-import React, { FC, useState, MouseEvent, Suspense, lazy, useRef, useEffect } from 'react';
+import React, { FC, useState, MouseEvent, Suspense, lazy, useRef, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import Button from './Button';
 import Color from './Color';
@@ -30,10 +30,10 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
         setIsModalOpen(false);
     };
 
-    const handleMemberClick = (member: Member) => {
+    const handleMemberClick = useCallback((member: Member) => {
         const newActiveMember = activeMember?.id === member.id ? null : member;
         onActiveMemberChange(newActiveMember);
-    };
+    }, [activeMember, onActiveMemberChange]);
 
     const handleSearchClick = (e: MouseEvent) => {
         e.stopPropagation();
@@ -57,10 +57,19 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
         };
     }, [searchVisible]);
 
-    const handleSearch = () => {
+    const handleSearch = useCallback(() => {
         // This will be called when the search input changes
-        // You can implement filtering logic here if needed in the future
-    };
+        // We're using the filterFunction in SearchBox directly, so no need to do anything here
+    }, []);
+
+    const handleSearchResultClick = useCallback((member: Member) => {
+        // Select the member
+        handleMemberClick(member);
+        
+        // Close the search box
+        setSearchVisible(false);
+        setSearchQuery('');
+    }, [handleMemberClick]);
 
     return (
         <ControlsContainer onClick={(e) => e.stopPropagation()}  data-type="control-container" className={className}>
@@ -77,6 +86,7 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
                             placeholder="Search members..."
                             floating={true}
                             filterFunction={(member, query) => member.name.toLowerCase().includes(query.toLowerCase())}
+                            onResultClick={handleSearchResultClick}
                         />
                     )}
                 </ButtonWrapper>

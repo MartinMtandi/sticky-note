@@ -38,4 +38,5 @@ export interface SearchBoxProps<T> {
     placeholder: string;
     floating?: boolean; // Controls floating behavior
     filterFunction: (item: T, query: string) => boolean;
+    onResultClick?: (item: T) => void; // Optional callback when a search result is clicked
 }
