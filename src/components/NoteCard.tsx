@@ -23,6 +23,8 @@ interface CardStyledProps extends StyledProps {
 interface NoteCardProps {
     note: Note;
     onDelete: () => void;
+    id?: string;
+    className?: string;
 }
 
 const MemberSelector = styled.div<{ $show: boolean }>`
@@ -127,7 +129,7 @@ const UnassignOption = styled.div`
     }
 `;
 
-const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
+const NoteCard: FC<NoteCardProps> = ({ note, onDelete, id, className }) => {
     const { body, colors, priority, completed, memberId } = note;
     const [pos, setPos] = useState<CardStyledProps['$position']>(note.position);
     const [saving, setSaving] = useState<boolean>(false);
@@ -277,8 +279,9 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete }) => {
 
     return (
         <Card
-            className="note-card"
+            className={`note-card ${className || ''}`}
             data-type="note-card"
+            id={id}
             onMouseDown={mouseDown}
             ref={cardRef}
             $colors={currentColors}

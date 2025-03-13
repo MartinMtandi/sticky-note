@@ -25,6 +25,7 @@ const NotesPage: FC = () => {
   const [activeMember, setActiveMember] = useState<Member | null>(null);
   const [queriedNotes, setQueriedNotes] = useState<Note[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
 
   const handlePageClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     // Don't create note if clicking on a note or controls
@@ -63,6 +64,38 @@ const NotesPage: FC = () => {
     return notes.filter(note => !activeMember || note.memberId === activeMember.id);
   }, [notes, activeMember]);
 
+  // Handle search result click to select a note
+  const handleSearchResultClick = useCallback((note: Note) => {
+    setSelectedNote(note);
+    setSearchQuery('');
+    
+    // Optionally scroll to the selected note
+    if (note) {
+      const noteElement = document.getElementById(`note-${note.$id}`);
+      if (noteElement) {
+        noteElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Add a temporary highlight effect
+        noteElement.classList.add('highlighted');
+        setTimeout(() => {
+          noteElement.classList.remove('highlighted');
+        }, 2000);
+      }
+    }
+  }, []);
+
+  // Custom render function for note search results
+  const renderNoteSearchResult = useCallback((note: Note) => {
+    const noteText = note.body.trim() || "Empty note";
+    const displayText = noteText.length > 30 ? `${noteText.substring(0, 30)}...` : noteText;
+    
+    return (
+      <>
+        <NoteDot $color={note.colors.colorHeader} />
+        <span>{displayText}</span>
+      </>
+    );
+  }, []);
+
   const displayedNotes = queriedNotes.length > 0 ? queriedNotes : filteredNotes;
 
   return (
@@ -73,12 +106,22 @@ const NotesPage: FC = () => {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           onSearch={setQueriedNotes}
-          placeholder="Search tasks..."
-          filterFunction={(note, query) => note.body.toLowerCase().includes(query.toLowerCase())}
+          placeholder="Search notes..."
+          filterFunction={(note, query) => 
+            note.body.toLowerCase().includes(query.toLowerCase())
+          }
+          onResultClick={handleSearchResultClick}
+          renderItem={renderNoteSearchResult}
         />
       )}
       {displayedNotes.map((note: Note) => (
-        <NoteCard key={note.$id} note={note} onDelete={() => deleteNote(note.$id)} />
+        <NoteCard 
+          key={note.$id} 
+          note={note} 
+          onDelete={() => deleteNote(note.$id)} 
+          id={`note-${note.$id}`}
+          className={`note-card ${selectedNote && selectedNote.$id === note.$id ? 'selected' : ''}`}
+        />
       ))}
       <Controls
         onActiveMemberChange={setActiveMember}
@@ -103,6 +146,31 @@ const PageContainer = styled.div`
   & > *[disabled], & > *[aria-disabled="true"] {
     cursor: not-allowed;
   }
+  
+  /* Highlighting for selected notes */
+  .note-card.selected, .note-card.highlighted {
+    box-shadow: 0 0 0 2px #4d79ff, 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+  }
+  
+  .highlighted {
+    animation: pulse 2s;
+  }
+  
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 2px #4d79ff, 0 4px 8px rgba(0, 0, 0, 0.2); }
+    50% { box-shadow: 0 0 0 4px #4d79ff, 0 8px 16px rgba(0, 0, 0, 0.3); }
+    100% { box-shadow: 0 0 0 2px #4d79ff, 0 4px 8px rgba(0, 0, 0, 0.2); }
+  }
+`;
+
+const NoteDot = styled.div<{ $color: string }>`
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: ${props => props.$color};
+  margin-right: 0.5rem;
+  flex-shrink: 0;
 `;
 
 export default NotesPage;

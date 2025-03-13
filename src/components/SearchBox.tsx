@@ -2,7 +2,19 @@ import React, { useCallback, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { SearchBoxProps } from "../utils/types";
 
-const SearchBox = <T extends { id: string; name: string; colorHeader: string }>({
+// Define a common interface for objects we might search through
+interface SearchableItem {
+  id?: string;
+  $id?: number;
+  colorHeader?: string;
+  name?: string;
+  body?: string;
+  colors?: {
+    colorHeader?: string;
+  };
+}
+
+const SearchBox = <T extends SearchableItem>({
   data,
   searchQuery,
   setSearchQuery,
@@ -11,6 +23,7 @@ const SearchBox = <T extends { id: string; name: string; colorHeader: string }>(
   floating = false,
   filterFunction,
   onResultClick,
+  renderItem,
 }: SearchBoxProps<T>) => {
   const inputRef = useRef<HTMLInputElement>(null);
   
@@ -35,10 +48,31 @@ const SearchBox = <T extends { id: string; name: string; colorHeader: string }>(
     [data, onSearch, setSearchQuery, filterFunction]
   );
 
-  // Filter members based on the search query
-  const filteredMembers = searchQuery.trim() 
+  // Filter items based on the search query
+  const filteredItems = searchQuery.trim() 
     ? data.filter(item => filterFunction(item, searchQuery)) 
     : [];
+
+  // Default render function for items if custom renderItem is not provided
+  const defaultRenderItem = (item: T) => {
+    // Try to extract a color for the dot
+    const color = 
+      item.colorHeader || 
+      (item.colors && item.colors.colorHeader) || 
+      "#cccccc";
+    
+    // Try to extract a name/title for the item
+    const title = 
+      item.name || 
+      (item.body ? item.body.substring(0, 30) : "Untitled");
+    
+    return (
+      <>
+        <MemberDot $color={color} />
+        <span>{title}{item.body && item.body.length > 30 ? "..." : ""}</span>
+      </>
+    );
+  };
 
   return (
     <SearchContainer $floating={floating} onClick={e => e.stopPropagation()}>
@@ -50,20 +84,20 @@ const SearchBox = <T extends { id: string; name: string; colorHeader: string }>(
         ref={inputRef}
       />
       
-      {(searchQuery.trim() !== "" && floating) && (
+      {(searchQuery.trim() !== "") && (
         <ResultsContainer>
-          {filteredMembers.length > 0 ? (
-            filteredMembers.map((member) => (
+          {filteredItems.length > 0 ? (
+            filteredItems.map((item, index) => (
               <SearchResult 
-                key={member.id}
-                onClick={() => onResultClick && onResultClick(member)}
+                // Use item.id or item.$id or fall back to index
+                key={`search-result-${item.id || item.$id || index}`}
+                onClick={() => onResultClick && onResultClick(item)}
               >
-                <MemberDot $color={member.colorHeader} />
-                <span>{member.name}</span>
+                {renderItem ? renderItem(item) : defaultRenderItem(item)}
               </SearchResult>
             ))
           ) : (
-            <NoResults>No members found</NoResults>
+            <NoResults>No results found</NoResults>
           )}
         </ResultsContainer>
       )}
@@ -136,6 +170,9 @@ const SearchResult = styled.div`
   span {
     color: white;
     font-size: 0.875rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 `;
 
@@ -145,6 +182,7 @@ const MemberDot = styled.div<{ $color: string }>`
   border-radius: 50%;
   background-color: ${props => props.$color};
   margin-right: 0.5rem;
+  flex-shrink: 0;
 `;
 
 const NoResults = styled.div`
