@@ -50,7 +50,7 @@ const SearchBox = <T extends { id: string; name: string; colorHeader: string }>(
         ref={inputRef}
       />
       
-      {searchQuery.trim() !== "" && (
+      {(searchQuery.trim() !== "" && floating) && (
         <ResultsContainer>
           {filteredMembers.length > 0 ? (
             filteredMembers.map((member) => (
