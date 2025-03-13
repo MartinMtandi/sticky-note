@@ -1,4 +1,4 @@
-import React, { FC, useState, MouseEvent, Suspense, lazy } from 'react';
+import React, { FC, useState, MouseEvent, Suspense, lazy, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import Button from './Button';
 import Color from './Color';
@@ -19,6 +19,7 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
     const { members, addMember } = useMembers();
     const [searchVisible, setSearchVisible] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const searchButtonRef = useRef<HTMLDivElement>(null);
 
     const handleAddMember = (e: MouseEvent) => {
         e.stopPropagation();
@@ -40,25 +41,43 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
         setSearchQuery('');
     };
 
+    // Close search box when clicking outside
+    useEffect(() => {
+        if (!searchVisible) return;
+        
+        const handleClickOutside = (e: MouseEvent) => {
+            if (searchButtonRef.current && !searchButtonRef.current.contains(e.target as Node)) {
+                setSearchVisible(false);
+            }
+        };
+        
+        document.addEventListener('mousedown', handleClickOutside as unknown as EventListener);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside as unknown as EventListener);
+        };
+    }, [searchVisible]);
+
+    const handleSearch = () => {
+        // This will be called when the search input changes
+        // You can implement filtering logic here if needed in the future
+    };
+
     return (
         <ControlsContainer onClick={(e) => e.stopPropagation()}  data-type="control-container" className={className}>
             <Button variant="add" onClick={handleAddMember} />
             {members.length > 1 && (
-                <ButtonWrapper>
+                <ButtonWrapper ref={searchButtonRef}>
                     <Button variant="search" onClick={handleSearchClick} />
                     {searchVisible && (
                         <SearchBox
-                        data={members}
-                        searchQuery={searchQuery}
-                        setSearchQuery={setSearchQuery}
-                        onSearch={() => {
-                            // No need for a separate state setter, just update `searchQuery`
-                            setSearchQuery(searchQuery);
-                          }}
-                        placeholder="Search members..."
-                        floating
-                        filterFunction={(member, query) => member.name.toLowerCase().includes(query.toLowerCase())}
-                      />
+                            data={members}
+                            searchQuery={searchQuery}
+                            setSearchQuery={setSearchQuery}
+                            onSearch={handleSearch}
+                            placeholder="Search members..."
+                            floating={true}
+                            filterFunction={(member, query) => member.name.toLowerCase().includes(query.toLowerCase())}
+                        />
                     )}
                 </ButtonWrapper>
             )}
@@ -103,6 +122,7 @@ const ButtonWrapper = styled.div`
     border-top: 1px solid #cccc;
     position: relative;
     padding-top: 1rem;
+    width: 100%;
 `;
 
 export default React.memo(Controls);

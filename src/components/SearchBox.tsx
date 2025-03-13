@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { SearchBoxProps } from "../utils/types";
 
@@ -11,6 +11,15 @@ const SearchBox = <T,>({
   floating = false,
   filterFunction,
 }: SearchBoxProps<T>) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  
+  // Auto-focus when component mounts
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+
   const handleSearchInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const query = e.target.value;
@@ -32,23 +41,25 @@ const SearchBox = <T,>({
         placeholder={placeholder}
         value={searchQuery}
         onChange={handleSearchInputChange}
-        autoFocus
+        ref={inputRef}
       />
     </SearchContainer>
   );
 };
 
-// Styled components with conditional floating styles
+// Styled components with improved floating styles for Controls component
 const SearchContainer = styled.div<{ $floating: boolean }>`
   position: ${({ $floating }) => ($floating ? "absolute" : "fixed")};
   top: ${({ $floating }) => ($floating ? "0" : "1rem")};
-  right: ${({ $floating }) => ($floating ? "5em" : "2rem")};
+  left: ${({ $floating }) => ($floating ? "calc(100% + 2rem)" : "auto")};
+  right: ${({ $floating }) => ($floating ? "auto" : "2rem")};
   background: #35363e;
   padding: 1rem;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   width: 300px;
-  z-index: 10000;
+  z-index: 10001;
+  transform: ${({ $floating }) => ($floating ? "translateY(0%)" : "none")};
 `;
 
 const SearchInput = styled.input`
