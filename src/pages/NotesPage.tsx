@@ -150,12 +150,13 @@ const NotesPage: FC = () => {
           onToggle={handleSearchToggle}
         />
       )}
-      {displayedNotes.map((note: Note) => (
+      {displayedNotes.map((note: Note, index: number) => (
         <NoteCard 
           key={note.$id} 
           note={note} 
           onDelete={() => deleteNote(note.$id)} 
           id={`note-${note.$id}`}
+          animationDelay={index * 150} // Add 150ms delay per note for sequential appearance
         />
       ))}
       <Controls

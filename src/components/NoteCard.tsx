@@ -1,5 +1,5 @@
 import { FC, useCallback, useRef, useEffect, useState, MouseEvent } from 'react'
-import styled from 'styled-components'
+import styled, { keyframes, css } from 'styled-components'
 import { Note, NoteColors, Member } from '../utils/types';
 import { autoGrow, setZIndex } from '../utils';
 import { useNotes } from '../context/GlobalNotesContext';
@@ -18,6 +18,7 @@ interface StyledProps {
 interface CardStyledProps extends StyledProps {
     $position: { x: number; y: number };
     $completed?: boolean;
+    $visible: boolean;
 }
 
 interface NoteCardProps {
@@ -25,7 +26,25 @@ interface NoteCardProps {
     onDelete: () => void;
     id?: string;
     className?: string;
+    animationDelay?: number;
 }
+
+const popIn = keyframes`
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    60% {
+        transform: scale(1.05);
+    }
+    80% {
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+`;
 
 const MemberSelector = styled.div<{ $show: boolean }>`
     position: absolute;
@@ -129,7 +148,13 @@ const UnassignOption = styled.div`
     }
 `;
 
-const NoteCard: FC<NoteCardProps> = ({ note, onDelete, id, className }) => {
+const NoteCard: FC<NoteCardProps> = ({ 
+    note, 
+    onDelete, 
+    id,
+    className,
+    animationDelay = 0
+}) => {
     const { body, colors, priority, completed, memberId } = note;
     const [pos, setPos] = useState<CardStyledProps['$position']>(note.position);
     const [saving, setSaving] = useState<boolean>(false);
@@ -143,6 +168,16 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete, id, className }) => {
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const { updateNote } = useNotes();
     const { getMember, members } = useMembers();
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        // Set visibility after delay for animation
+        const timer = setTimeout(() => {
+            setIsVisible(true);
+        }, animationDelay);
+        
+        return () => clearTimeout(timer);
+    }, [animationDelay]);
 
     // Get current member
     const currentMember = memberId ? getMember(memberId) : null;
@@ -263,7 +298,7 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete, id, className }) => {
         });
     }, [updateNote, note, mouseMove]);
 
-    const mouseDown = useCallback((e: MouseEvent<HTMLDivElement>) => {
+    const handleMouseDown = useCallback((e: MouseEvent<HTMLDivElement>) => {
         const target = e.target as HTMLElement;
         if (target.getAttribute("data-type") === "note-header") {
             setZIndex(cardRef.current);
@@ -280,13 +315,13 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete, id, className }) => {
     return (
         <Card
             className={`note-card ${className || ''}`}
-            data-type="note-card"
             id={id}
-            onMouseDown={mouseDown}
             ref={cardRef}
+            onMouseDown={handleMouseDown}
             $colors={currentColors}
             $position={pos}
             $completed={isCompleted}
+            $visible={isVisible}
         >
             <CardHeader data-type="note-header" $colors={currentColors}>
                 <Button variant="delete" onClick={handleDelete} />
@@ -363,23 +398,24 @@ const NoteCard: FC<NoteCardProps> = ({ note, onDelete, id, className }) => {
 }
 
 const Card = styled.div<CardStyledProps>`
-    width: 400px;
-    border-radius: 5px;
-    cursor: pointer;
     position: absolute;
     left: ${props => props.$position.x}px;
     top: ${props => props.$position.y}px;
+    width: 300px;
+    min-height: 200px;
     background-color: ${props => props.$colors.colorBody};
-    opacity: ${props => props.$completed ? 0.8 : 1};
-    box-shadow: 
-        0 1px 1px hsl(0deg 0% 0% / 0.075),
-        0 2px 2px hsl(0deg 0% 0% / 0.075),
-        0 4px 4px hsl(0deg 0% 0% / 0.075),
-        0 8px 8px hsl(0deg 0% 0% / 0.075),
-        0 16px 16px hsl(0deg 0% 0% / 0.075);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: auto;
     display: flex;
     flex-direction: column;
     transition: opacity 0.2s ease;
+    opacity: 0;
+    transform: scale(0.5);
+  
+    ${props => props.$visible && css`
+        animation: ${popIn} 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    `}
 `
 
 const CardBody = styled.div`
