@@ -4,7 +4,7 @@ import { SearchBoxProps } from "../utils/types";
 
 // Define a common interface for objects we might search through
 interface SearchableItem {
-  id?: string;
+  id?: number;
   $id?: number;
   colorHeader?: string;
   name?: string;

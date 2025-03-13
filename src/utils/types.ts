@@ -16,7 +16,7 @@ export interface Note {
     body: string;
     colors: NoteColors;
     position: NotePosition;
-    memberId?: string;
+    memberId?: number;
     priority?: Priority;
     completed?: boolean;
 }
@@ -26,7 +26,7 @@ export interface ColorProps {
 }
 
 export interface Member extends NoteColors {
-    id: string;
+    id: number;
     name: string;
 }
 

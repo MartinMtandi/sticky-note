@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { Member } from '../utils/types';
+import { migrateDataToNumericIds } from '../utils/dataMigration';
 
 const STORAGE_KEY = 'sticky-notes-members';
 
@@ -7,9 +8,9 @@ const STORAGE_KEY = 'sticky-notes-members';
 interface MembersContextType {
     members: Member[];
     addMember: (member: { name: string; colorHeader: string; colorBody: string; colorText: string }) => void;
-    updateMember: (id: string, updatedMember: Member) => void;
-    deleteMember: (memberId: string) => void;
-    getMember: (memberId: string) => Member | undefined;
+    updateMember: (id: number, updatedMember: Member) => void;
+    deleteMember: (memberId: number) => void;
+    getMember: (memberId: number) => Member | undefined;
 }
 
 // Create the context
@@ -17,6 +18,11 @@ const MembersContext = createContext<MembersContextType | undefined>(undefined);
 
 // Provider component
 export const MembersProvider = ({ children }: { children: ReactNode }) => {
+    // Run data migration once on first load
+    useEffect(() => {
+        migrateDataToNumericIds();
+    }, []);
+
     const [members, setMembers] = useState<Member[]>(() => {
         const savedMembers = localStorage.getItem(STORAGE_KEY);
         return savedMembers ? JSON.parse(savedMembers) : [];
@@ -28,19 +34,19 @@ export const MembersProvider = ({ children }: { children: ReactNode }) => {
     }, [members]);
 
     const addMember = (member: { name: string; colorHeader: string; colorBody: string; colorText: string }) => {
-        const newMember: Member = { ...member, id: `member-${Date.now()}` };
+        const newMember: Member = { ...member, id: Date.now() };
         setMembers((prev) => [...prev, newMember]);
     };
 
-    const updateMember = (id: string, updatedMember: Member) => {
+    const updateMember = (id: number, updatedMember: Member) => {
         setMembers((prev) => prev.map((member) => (member.id === id ? updatedMember : member)));
     };
 
-    const deleteMember = (memberId: string) => {
+    const deleteMember = (memberId: number) => {
         setMembers((prev) => prev.filter((member) => member.id !== memberId));
     };
 
-    const getMember = (memberId: string) => members.find((member) => member.id === memberId);
+    const getMember = (memberId: number) => members.find((member) => member.id === memberId);
 
     return (
         <MembersContext.Provider value={{ members, addMember, updateMember, deleteMember, getMember }}>

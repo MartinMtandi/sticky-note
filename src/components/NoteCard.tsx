@@ -233,7 +233,7 @@ const NoteCard: FC<NoteCardProps> = ({
         await onDelete();
     }
 
-    const handleMemberSelect = (memberId: string | undefined, memberColors?: NoteColors) => {
+    const handleMemberSelect = (memberId: number | undefined, memberColors?: NoteColors) => {
         updateNote({
             ...note,
             memberId,

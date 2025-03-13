@@ -99,7 +99,8 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
                             onSearch={handleSearch}
                             placeholder="Search members..."
                             floating={true}
-                            filterFunction={(member, query) => member.name.toLowerCase().includes(query.toLowerCase())}
+                            filterFunction={(member, query) => 
+                                member.name?.toLowerCase().includes(query.toLowerCase())}
                             onResultClick={handleSearchResultClick}
                             onToggle={updateSearchVisibility}
                         />

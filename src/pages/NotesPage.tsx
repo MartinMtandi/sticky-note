@@ -59,7 +59,7 @@ const NotesPage: FC = () => {
         colorBody: memberToUse.colorBody,
         colorText: memberToUse.colorText
       } : DEFAULT_NOTE_COLORS,
-      memberId: memberToUse?.id,
+      memberId: memberToUse?.id, // Use numeric member ID
       position: {
         x: e.clientX + scrollX,
         y: e.clientY + scrollY
