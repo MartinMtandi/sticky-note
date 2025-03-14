@@ -44,3 +44,18 @@ export const lightenHexColor = (hex: string): string => {
     // Convert back to hex
     return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1).toUpperCase()}`;
 }
+
+export const colors = [
+    '#FFEFBE', // Yellow
+    '#AFDA9F', // Green
+    '#9BD1DE', // Blue
+    '#FED0FD', // Purple
+    '#FFB5C2', // Pink
+    '#FFB584', // Orange
+    '#7FDBDA', // Teal
+    '#BDEF92', // Lime
+    '#FF9AA2', // Coral
+    '#D4BBFF', // Lavender
+    '#98F5E1', // Mint
+    '#FFCBA4'  // Peach
+];

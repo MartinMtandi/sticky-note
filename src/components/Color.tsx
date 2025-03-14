@@ -19,7 +19,6 @@ interface TooltipTextProps {
 }
 
 const Color: FC<ColorProps> = ({ member, isActive = false, onClick }) => {
-
     return (
         <ColorButton
             $backgroundColor={member.colorHeader}
@@ -38,7 +37,7 @@ const Color: FC<ColorProps> = ({ member, isActive = false, onClick }) => {
 const ColorButton = styled.button<StyledColorProps>`
     width: 30px;
     height: 30px;
-    border-radius: 50%;
+    border-radius: ${({ theme }) => theme.borderRadius.round};
     border: none;
     background-color: ${props => props.$backgroundColor};
     cursor: pointer;
@@ -60,8 +59,8 @@ const Tooltip = styled.div<StyledColorProps>`
     top: 50%;
     transform: translateY(-50%);
     background-color: ${props => props.$backgroundColor};
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
+    padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
+    border-radius: ${({ theme }) => theme.borderRadius.sm};
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
@@ -83,8 +82,8 @@ const TooltipArrow = styled.div<StyledColorProps>`
 
 const TooltipText = styled.span<TooltipTextProps>`
     color: ${props => props.$textColor};
-    font-size: 14px;
-    font-weight: 500;
+    font-size: ${({ theme }) => theme.typography.fontSizes.sm};
+    font-weight: ${({ theme }) => theme.typography.fontWeights.medium};
 `;
 
 export default Color;

@@ -33,10 +33,10 @@ export const Pill = ({ priority, onClick, disabled }: PillProps) => {
 
 const PillContainer = styled.div<{ $color: string }>`
     /* Size and shape */
-    padding: 3px 10px;
-    border-radius: 5px;
-    font-size: 10px;
-    font-weight: 600;
+    padding: ${({theme}) => theme.spacing.xs} ${({theme}) => theme.spacing.sm};
+    border-radius: ${({theme}) => theme.borderRadius.sm};
+    font-size: ${({theme}) => theme.typography.fontSizes.x};
+    font-weight: ${({theme}) => theme.typography.fontWeights.semibold};
     letter-spacing: 0.5px;
     text-transform: uppercase;
     display: inline-flex;
@@ -50,7 +50,7 @@ const PillContainer = styled.div<{ $color: string }>`
     
     /* Interaction */
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all ${({theme}) => theme.transitions.fast};
     user-select: none;
 
     /* Hover effect - scale animation */

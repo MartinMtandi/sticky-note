@@ -1,33 +1,16 @@
 import { FC, useCallback, useRef, useEffect, useState, MouseEvent } from 'react'
 import styled, { keyframes, css } from 'styled-components'
-import { Note, NoteColors, Member } from '../utils/types';
+import { NoteColors, Member, NoteCardProps, CardStyledProps, StyledProps } from '../utils/types';
 import { autoGrow, setZIndex } from '../utils';
 import { useNotes } from '../context/GlobalNotesContext';
 import { useMembers } from '../context/GlobalMembersContext';
 import Spinner from '../icons/Spinner';
 import Button from './Button';
 import Checkbox from './Checkbox';
+import { defaultTheme as theme } from '../utils/theme';
 import MenuIcon from '../icons/MenuIcon';
 import { Priority } from '../utils/constants';
 import { Pill } from './Pill';
-
-interface StyledProps {
-    $colors: NoteColors;
-}
-
-interface CardStyledProps extends StyledProps {
-    $position: { x: number; y: number };
-    $completed?: boolean;
-    $visible: boolean;
-}
-
-interface NoteCardProps {
-    note: Note;
-    onDelete: () => void;
-    id?: string;
-    className?: string;
-    animationDelay?: number;
-}
 
 const popIn = keyframes`
     0% {
@@ -46,9 +29,9 @@ const popIn = keyframes`
     }
 `;
 
-const NoteCard: FC<NoteCardProps> = ({ 
-    note, 
-    onDelete, 
+const NoteCard: FC<NoteCardProps> = ({
+    note,
+    onDelete,
     id,
     className,
     animationDelay = 0
@@ -73,7 +56,7 @@ const NoteCard: FC<NoteCardProps> = ({
         const timer = setTimeout(() => {
             setIsVisible(true);
         }, animationDelay);
-        
+
         return () => clearTimeout(timer);
     }, [animationDelay]);
 
@@ -82,9 +65,9 @@ const NoteCard: FC<NoteCardProps> = ({
 
     // Define completed colors
     const completedColors = {
-        colorHeader: '#4A4A4A',
-        colorBody: '#666666',
-        colorText: '#CCCCCC'
+        colorHeader: theme.colors.text.dark,
+        colorBody: theme.colors.text.secondary,
+        colorText: theme.colors.text.accent
     };
 
     // Get current colors based on completion status
@@ -146,11 +129,11 @@ const NoteCard: FC<NoteCardProps> = ({
     };
 
     const cyclePriority = (e: MouseEvent) => {
-        e.stopPropagation(); 
+        e.stopPropagation();
         const priorities: Priority[] = ['HIGH', 'MEDIUM', 'LOW'];
         const currentIndex = currentPriority ? priorities.indexOf(currentPriority) : -1;
         const nextPriority = currentIndex === priorities.length - 1 ? undefined : priorities[(currentIndex + 1) % priorities.length];
-        
+
         setCurrentPriority(nextPriority);
         updateNote({
             ...note,
@@ -169,27 +152,27 @@ const NoteCard: FC<NoteCardProps> = ({
     const mouseMove = useCallback((e: globalThis.MouseEvent) => {
         const dx = e.clientX - mouseStartPos.current.x;
         const dy = e.clientY - mouseStartPos.current.y;
-    
+
         const newPos = {
             x: lastMousePos.current.x + dx,
             y: lastMousePos.current.y + dy
         };
-    
+
         setPos(newPos);
     }, [setPos]);
 
     const mouseUp = useCallback((e: globalThis.MouseEvent) => {
         window.removeEventListener("mousemove", mouseMove);
         window.removeEventListener("mouseup", mouseUp);
-    
+
         const dx = e.clientX - mouseStartPos.current.x;
         const dy = e.clientY - mouseStartPos.current.y;
-    
+
         const finalPos = {
             x: lastMousePos.current.x + dx,
             y: lastMousePos.current.y + dy
         };
-    
+
         updateNote({
             ...note,
             position: finalPos
@@ -205,7 +188,7 @@ const NoteCard: FC<NoteCardProps> = ({
             window.addEventListener("mousemove", mouseMove);
             window.addEventListener("mouseup", mouseUp);
         }
-    }, [pos, mouseMove, mouseUp]); 
+    }, [pos, mouseMove, mouseUp]);
 
     // Get member name from memberId
     const memberName = currentMember?.name || 'Unassigned';
@@ -260,7 +243,7 @@ const NoteCard: FC<NoteCardProps> = ({
             </CardHeader>
             <CardBody>
                 <PillWrapper>
-                    <Pill 
+                    <Pill
                         priority={currentPriority}
                         onClick={cyclePriority}
                         disabled={isCompleted}
@@ -280,8 +263,8 @@ const NoteCard: FC<NoteCardProps> = ({
             </CardBody>
             <CardFooter $colors={currentColors}>
                 <FooterLeft>
-                    <Checkbox 
-                        checked={isCompleted} 
+                    <Checkbox
+                        checked={isCompleted}
                         onChange={toggleComplete}
                         color={currentColors.colorHeader}
                     />
@@ -302,12 +285,12 @@ const Card = styled.div<CardStyledProps>`
     width: 300px;
     min-height: 200px;
     background-color: ${props => props.$colors.colorBody};
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: ${({ theme }) => theme.borderRadius.md};
+    box-shadow: ${({ theme }) => theme.shadows.md};
     cursor: auto;
     display: flex;
     flex-direction: column;
-    transition: opacity 0.2s ease;
+    transition: opacity ${({ theme }) => theme.transitions.fast};
     opacity: 0;
     transform: scale(0.5);
   
@@ -317,12 +300,12 @@ const Card = styled.div<CardStyledProps>`
 `
 
 const CardBody = styled.div`
-    padding: 1em;
+    padding: ${({ theme }) => theme.spacing.md};
     flex: 1;
 `
 
 const PillWrapper = styled.div`
-    margin-bottom: 12px;
+    margin-bottom: ${({ theme }) => theme.spacing.m};
     display: flex;
     align-items: center;
     min-height: 24px;
@@ -334,9 +317,9 @@ const TextArea = styled.textarea<StyledProps>`
     width: 100%;
     height: 100%;
     resize: none;
-    font-size: 16px;
+    font-size: ${({ theme }) => theme.typography.fontSizes.md};
     color: ${props => props.$colors.colorText};
-    cursor: ${props => props.$colors.colorText === '#CCCCCC' ? 'not-allowed' : 'text'};
+    cursor: ${(props) => props.$colors.colorText === props.theme.colors.text.accent ? 'not-allowed' : 'text'};
 
     &:disabled {
         background-color: inherit;
@@ -354,9 +337,9 @@ const TextArea = styled.textarea<StyledProps>`
 const CardHeader = styled.div<StyledProps>`
     display: flex;
     align-items: center;
-    padding: 0.5em;
+    padding: ${({ theme }) => theme.spacing.sm};
     background-color: ${props => props.$colors.colorHeader};
-    border-radius: 5px 5px 0 0;
+    border-radius: ${({ theme }) => theme.borderRadius.m} ${({ theme }) => theme.borderRadius.m} 0 0;
     position: relative;
 
     > :first-child {
@@ -366,8 +349,8 @@ const CardHeader = styled.div<StyledProps>`
 
 const CardFooter = styled.div<StyledProps>`
     background-color: ${props => props.$colors.colorBody};
-    border-radius: 0 0 5px 5px;
-    padding: 0.5em 1em;
+    border-radius: 0 0 ${({ theme }) => theme.borderRadius.m} ${({ theme }) => theme.borderRadius.m};
+    padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -377,25 +360,25 @@ const CardFooter = styled.div<StyledProps>`
 const FooterLeft = styled.div`
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: ${({ theme }) => theme.spacing.sm};
 `;
 
 const FooterRight = styled.div`
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: ${({ theme }) => theme.spacing.sm};
 `;
 
 const FooterText = styled.span<StyledProps>`
     color: ${props => props.$colors.colorText};
-    font-size: 12px;
+    font-size: ${({ theme }) => theme.typography.fontSizes.xs};
     font-style: italic;
 `
 
 const SavingIndicator = styled.div`
     display: flex;
     align-items: center;
-    gap: 0.5em;
+    gap: ${({ theme }) => theme.spacing.sm};
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
@@ -403,7 +386,7 @@ const SavingIndicator = styled.div`
 
 const SavingText = styled.span<StyledProps>`
     color: ${props => props.$colors.colorText};
-    font-size: 12px;
+    font-size: ${({ theme }) => theme.typography.fontSizes.xs};
 `;
 
 
@@ -411,23 +394,23 @@ const MemberSelector = styled.div<{ $show: boolean }>`
     position: absolute;
     top: 100%;
     right: 0;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    padding: 0.5rem;
+    background: ${({ theme }) => theme.colors.text.light};
+    border-radius: ${({ theme }) => theme.borderRadius.m};
+    box-shadow: ${({ theme }) => theme.shadows.md};
+    padding: ${({ theme }) => theme.spacing.sm};
     display: ${props => props.$show ? 'flex' : 'none'};
     flex-direction: column;
-    gap: 0.5rem;
+    gap: ${({ theme }) => theme.spacing.sm};
     z-index: 10001;
 `;
 
 const MemberOption = styled.div<{ $color: string; $bodyColor: string; $textColor: string; $isActive: boolean }>`
     width: 24px;
     height: 24px;
-    border-radius: 50%;
+    border-radius: ${({ theme }) => theme.borderRadius.round};
     background-color: ${props => props.$color};
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all ${({ theme }) => theme.transitions.fast};
     position: relative;
     box-shadow: ${props => props.$isActive ? '0 0 0 2px white, 0 0 0 4px ' + props.$color : 'none'};
 
@@ -444,7 +427,7 @@ const MemberOption = styled.div<{ $color: string; $bodyColor: string; $textColor
         border: 6px solid transparent;
         border-right-color: ${props => props.$bodyColor};
         opacity: 0;
-        transition: opacity 0.2s ease;
+        transition: opacity ${({ theme }) => theme.transitions.fast};
     }
 
     &::after {
@@ -454,15 +437,15 @@ const MemberOption = styled.div<{ $color: string; $bodyColor: string; $textColor
         top: 50%;
         transform: translateY(-50%);
         white-space: nowrap;
-        font-size: 14px;
-        font-weight: 500;
+        font-size: ${({ theme }) => theme.typography.fontSizes.sm};
+        font-weight: ${({ theme }) => theme.typography.fontWeights.medium};
         background-color: ${props => props.$bodyColor};
         color: ${props => props.$textColor};
-        padding: 4px 8px;
-        border-radius: 4px;
+        padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
+        border-radius: ${({ theme }) => theme.borderRadius.sm};
         opacity: 0;
-        transition: opacity 0.2s ease;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: opacity ${({ theme }) => theme.transitions.fast};
+        box-shadow: ${({ theme }) => theme.shadows.sm};
     }
 
     &:hover::before,
@@ -474,14 +457,14 @@ const MemberOption = styled.div<{ $color: string; $bodyColor: string; $textColor
 const UnassignOption = styled.div`
     width: 24px;
     height: 24px;
-    border-radius: 50%;
-    background-color: #666;
+    border-radius: ${({ theme }) => theme.borderRadius.round};
+    background-color: ${({theme}) => theme.colors.text.secondary};
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all ${({ theme }) => theme.transitions.fast};
     position: relative;
     opacity: 0.5;
 
-    &:hover {
+    &:hover {   
         transform: scale(1.1);
         opacity: 0.8;
     }
@@ -493,15 +476,15 @@ const UnassignOption = styled.div`
         top: 50%;
         transform: translateY(-50%);
         white-space: nowrap;
-        font-size: 14px;
-        font-weight: 500;
-        background-color: #666;
-        color: white;
-        padding: 4px 8px;
-        border-radius: 4px;
+        font-size: ${({theme}) => theme.typography.fontSizes.sm};
+        font-weight: ${({theme}) => theme.typography.fontWeights.medium};
+        background-color: ${({theme}) => theme.colors.text.secondary};
+        color: ${({theme}) => theme.colors.text.light};
+        padding: ${({theme}) => theme.spacing.xs} ${({theme}) => theme.spacing.sm};
+        border-radius: ${({theme}) => theme.spacing.xs};
         opacity: 0;
-        transition: opacity 0.2s ease;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: opacity ${({theme}) => theme.transitions.fast};
+        box-shadow: ${({theme}) => theme.shadows.sm};
     }
 
     &:hover::after {

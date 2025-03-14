@@ -129,15 +129,15 @@ const Controls: FC<ControlsProps> = ({ className, onActiveMemberChange, activeMe
 const ControlsContainer = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 1em;
+    gap: ${({ theme }) => theme.spacing.md};
     align-items: center;
     position: fixed;
-    left: 1em;
+    left: ${({ theme }) => theme.spacing.md};
     top: 50%;
     transform: translateY(-50%);
-    background-color: #35363e;
-    padding: 1em 1em;
-    border-radius: 40px;
+    background-color: ${({ theme }) => theme.colors.ui.dark};
+    padding: ${({ theme }) => theme.spacing.md};
+    border-radius: ${({ theme }) => theme.borderRadius.xl};
     box-shadow: 0 1px 1px hsl(0deg 0% 0% / 0.075), 0 2px 2px hsl(0deg 0% 0% /
                     0.075), 0 4px 4px hsl(0deg 0% 0% / 0.075), 0 8px 8px hsl(0deg
                     0% 0% / 0.075), 0 16px 16px hsl(0deg 0% 0% / 0.075);
@@ -145,9 +145,9 @@ const ControlsContainer = styled.div`
 `;
 
 const ButtonWrapper = styled.div`
-    border-top: 1px solid #cccc;
+    border-top: 1px solid ${({ theme }) => theme.colors.text.accent};
     position: relative;
-    padding-top: 1rem;
+    padding-top: ${({ theme }) => theme.spacing.md};
     width: 100%;
 `;
 

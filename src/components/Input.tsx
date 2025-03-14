@@ -45,7 +45,7 @@ const Input: FC<InputProps> = ({
 const InputWrapper = styled.div<{ $fullWidth: boolean }>`
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: ${({ theme }) => theme.spacing.sm};
     width: ${({ $fullWidth }) => $fullWidth ? '100%' : 'auto'};
     box-sizing: border-box;
     min-width: 0; /* Prevent flex item from overflowing */
@@ -56,26 +56,26 @@ const Label = styled.label`
 `;
 
 const StyledInput = styled.input<{ $hasError: boolean; $fullWidth: boolean }>`
-    padding: 0.75rem 1rem;
-    border-radius: 6px;
-    border: 1px solid ${({ $hasError }) => $hasError ? '#d32f2f' : '#ddd'};
-    font-size: 1rem;
-    line-height: 1.5;
+    padding: ${({ theme }) => theme.spacing.m} ${({ theme }) => theme.spacing.md};
+    border-radius: ${({ theme }) => theme.borderRadius.md};
+    border: 1px solid ${({ $hasError, theme }) => $hasError ? theme.colors.text.error : '#ddd'};
+    font-size: ${({ theme }) => theme.typography.fontSizes.md};
+    line-height: ${({ theme }) => theme.typography.lineHeights.normal};
     width: ${({ $fullWidth }) => $fullWidth ? '100%' : 'auto'};
     transition: all 0.2s;
     background-color: white;
-    color: #333;
+    color: ${({ theme }) => theme.colors.text.primary};
     box-sizing: border-box;
     min-width: 0; /* Prevent flex item from overflowing */
     max-width: 100%; /* Ensure input doesn't overflow its container */
 
     &:hover {
-        border-color: ${({ $hasError }) => $hasError ? '#d32f2f' : '#999'};
+        border-color: ${({ $hasError, theme }) => $hasError ? theme.colors.text.error : '#999'};
     }
 
     &:focus {
         outline: none;
-        border-color: ${({ $hasError }) => $hasError ? '#d32f2f' : '#007bff'};
+        border-color: ${({ $hasError, theme }) => $hasError ? theme.colors.text.error : '#007bff'};
         box-shadow: 0 0 0 3px ${({ $hasError }) => 
             $hasError ? 'rgba(211, 47, 47, 0.1)' : 'rgba(0, 123, 255, 0.1)'};
     }
@@ -85,7 +85,7 @@ const StyledInput = styled.input<{ $hasError: boolean; $fullWidth: boolean }>`
     }
 
     &:disabled {
-        background-color: #f5f5f5;
+        background-color: ${({theme}) => theme.colors.ui.superLight};
         cursor: not-allowed;
         border-color: #ddd;
     }

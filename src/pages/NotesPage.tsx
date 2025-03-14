@@ -186,9 +186,9 @@ const PageContainer = styled.div`
 `;
 
 const NoteDot = styled.div<{ $color: string }>`
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
+  width: ${({theme}) => theme.sizes.iconSize / 2};
+  height: ${({theme}) => theme.sizes.iconSize / 2};
+  border-radius: ${({theme}) => theme.borderRadius.round};
   background-color: ${props => props.$color};
   margin-right: 0.5rem;
   flex-shrink: 0;

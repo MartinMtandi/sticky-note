@@ -121,35 +121,35 @@ const SearchBox = <T extends SearchableItem>({
 // Styled components with improved floating styles for Controls component
 const SearchContainer = styled.div<{ $floating: boolean }>`
   position: ${({ $floating }) => ($floating ? "absolute" : "fixed")};
-  top: ${({ $floating }) => ($floating ? "0" : "1rem")};
-  left: ${({ $floating }) => ($floating ? "calc(100% + 2rem)" : "auto")};
-  right: ${({ $floating }) => ($floating ? "auto" : "2rem")};
-  background: #35363e;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  width: 300px;
+  top: ${({ $floating, theme }) => ($floating ? "0" : theme.spacing.md)};
+  left: ${({ $floating, theme }) => ($floating ? `calc(100% + ${theme.spacing.xl})` : "auto")};
+  right: ${({ $floating, theme }) => ($floating ? "auto" : theme.spacing.md)};
+  background: ${({theme}) => theme.colors.ui.dark};
+  padding: ${({theme}) => theme.spacing.md};
+  border-radius: ${({theme}) => theme.borderRadius.md};
+  box-shadow: ${({theme}) => theme.shadows.md};
+  width: ${({theme}) => theme.sizes.searchSize};
   z-index: 10001;
   transform: ${({ $floating }) => ($floating ? "translateY(0%)" : "none")};
 `;
 
 const SearchInput = styled.input`
-  width: calc(100% - 1rem);
-  padding: 0.5rem;
-  border-radius: 4px;
+  width: calc(100% - ${({theme}) => theme.spacing.md});
+  padding: ${({theme}) => theme.spacing.sm};
+  border-radius: ${({theme}) => theme.borderRadius.sm};
   border: none;
-  background: #2a2b32;
-  color: white;
-  font-size: 0.875rem;
+  background: ${({theme}) => theme.colors.input.background};
+  color: ${({theme}) => theme.colors.input.text};
+  font-size: ${({theme}) => theme.typography.fontSizes.sm};
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 2px #4d79ff;
+    box-shadow: ${({theme}) => theme.shadows.xs};
   }
 `;
 
 const ResultsContainer = styled.div`
-  margin-top: 0.75rem;
+  margin-top: ${({theme}) => theme.spacing.m};
   max-height: 200px;
   overflow-y: auto;
   
@@ -158,31 +158,31 @@ const ResultsContainer = styled.div`
   }
   
   &::-webkit-scrollbar-thumb {
-    background-color: #555;
-    border-radius: 4px;
+    background-color: ${({theme}) => theme.colors.ui.dark};
+    border-radius: ${({theme}) => theme.borderRadius.sm};
   }
   
   &::-webkit-scrollbar-track {
-    background-color: #2a2b32;
-    border-radius: 4px;
+    background-color: ${({theme}) => theme.colors.ui.dark};
+    border-radius: ${({theme}) => theme.borderRadius.sm};
   }
 `;
 
 const SearchResult = styled.div`
   display: flex;
   align-items: center;
-  padding: 0.5rem;
+  padding: ${({theme}) => theme.spacing.sm};
   cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
+  border-radius: ${({theme}) => theme.borderRadius.sm};
+  transition: background-color ${({theme}) => theme.transitions.fast};
   
   &:hover {
-    background-color: #2a2b32;
+    background-color: ${({theme}) => theme.colors.input.background};
   }
   
   span {
-    color: white;
-    font-size: 0.875rem;
+    color: ${({theme}) => theme.colors.input.text};
+    font-size: ${({theme}) => theme.typography.fontSizes.sm};
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -192,17 +192,17 @@ const SearchResult = styled.div`
 const MemberDot = styled.div<{ $color: string }>`
   width: 12px;
   height: 12px;
-  border-radius: 50%;
+  border-radius: ${({theme}) => theme.borderRadius.round};
   background-color: ${props => props.$color};
-  margin-right: 0.5rem;
+  margin-right: ${({theme}) => theme.spacing.sm};
   flex-shrink: 0;
 `;
 
 const NoResults = styled.div`
-  color: #9ca3af;
+  color: ${({theme}) => theme.colors.text.tertiary};
   text-align: center;
-  padding: 0.5rem;
-  font-size: 0.875rem;
+  padding: ${({theme}) => theme.spacing.sm};
+  font-size: ${({theme}) => theme.typography.fontSizes.sm};
 `;
 
 export default SearchBox;
