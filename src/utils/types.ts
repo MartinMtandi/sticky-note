@@ -44,6 +44,24 @@ export interface SearchBoxProps<T> {
     onToggle?: (isVisible: boolean) => void; // Optional callback when search visibility changes
 }
 
+export interface StyledProps {
+    $colors: NoteColors;
+}
+
+export interface CardStyledProps extends StyledProps {
+    $position: { x: number; y: number };
+    $completed?: boolean;
+    $visible: boolean;
+}
+
+export interface NoteCardProps {
+    note: Note;
+    onDelete: () => void;
+    id?: string;
+    className?: string;
+    animationDelay?: number;
+}
+
 export type ThemeColors = {
   background: string;
   linearGradiant: string;
@@ -53,6 +71,8 @@ export type ThemeColors = {
     error: string;
     tertiary: string;
     light: string;
+    dark: string;
+    accent: string;
   };
   ui: {
     dark: string;

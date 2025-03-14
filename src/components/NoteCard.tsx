@@ -1,6 +1,6 @@
 import { FC, useCallback, useRef, useEffect, useState, MouseEvent } from 'react'
 import styled, { keyframes, css } from 'styled-components'
-import { Note, NoteColors, Member } from '../utils/types';
+import { NoteColors, Member, NoteCardProps, CardStyledProps, StyledProps } from '../utils/types';
 import { autoGrow, setZIndex } from '../utils';
 import { useNotes } from '../context/GlobalNotesContext';
 import { useMembers } from '../context/GlobalMembersContext';
@@ -10,24 +10,6 @@ import Checkbox from './Checkbox';
 import MenuIcon from '../icons/MenuIcon';
 import { Priority } from '../utils/constants';
 import { Pill } from './Pill';
-
-interface StyledProps {
-    $colors: NoteColors;
-}
-
-interface CardStyledProps extends StyledProps {
-    $position: { x: number; y: number };
-    $completed?: boolean;
-    $visible: boolean;
-}
-
-interface NoteCardProps {
-    note: Note;
-    onDelete: () => void;
-    id?: string;
-    className?: string;
-    animationDelay?: number;
-}
 
 const popIn = keyframes`
     0% {

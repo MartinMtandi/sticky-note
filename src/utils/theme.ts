@@ -12,6 +12,9 @@ export const defaultTheme: Theme = {
       error: '#d32f2f',
       tertiary: '#9ca3af',
       light: '#FFFFFF',
+      dark: '#4A4A4A',
+      accent: '#CCCCCC'
+
     },
     ui: {
       dark: '#35363e',
@@ -119,6 +122,8 @@ export const darkTheme: Theme = {
       tertiary: '#9ca3af',
       error: '#d32f2f',
       light: '#FFFFFF',
+      dark: '#4A4A4A',
+      accent: '#CCCCCC',
     },
     ui: {
       dark: '#35363e',
