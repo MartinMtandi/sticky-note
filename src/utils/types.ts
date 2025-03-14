@@ -1,3 +1,4 @@
+import { ButtonHTMLAttributes } from 'react';
 import { Priority } from './constants';
 import { PRIORITY_COLORS } from './constants';
 
@@ -196,3 +197,8 @@ export type TaskStatus =
     | 'READY_FOR_RELEASE'
     | 'BLOCKED'
     | 'DONE';
+
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+    variant: 'primary' | 'secondary' | 'add' | 'delete' | 'close' | 'search';
+    darkMode?: boolean;
+}

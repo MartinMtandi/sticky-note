@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import ColorPalette from '../ColorPalette';
 import { describe, it, vi, expect } from 'vitest';
-import { colors } from '../../utils';
+import { colors } from '../../utils/constants';
 
 const mockOnColorSelect = vi.fn();
 

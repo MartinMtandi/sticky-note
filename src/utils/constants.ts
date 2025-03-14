@@ -34,4 +34,19 @@ export const TASK_STATUS_LABELS = {
     DONE: 'Done'
 };
 
+export const colors = [
+    '#FFEFBE', // Yellow
+    '#AFDA9F', // Green
+    '#9BD1DE', // Blue
+    '#FED0FD', // Purple
+    '#FFB5C2', // Pink
+    '#FFB584', // Orange
+    '#7FDBDA', // Teal
+    '#BDEF92', // Lime
+    '#FF9AA2', // Coral
+    '#D4BBFF', // Lavender
+    '#98F5E1', // Mint
+    '#FFCBA4'  // Peach
+];
+
 
