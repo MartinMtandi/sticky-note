@@ -20,6 +20,7 @@ export interface Note {
     memberId?: number;
     priority?: Priority;
     completed?: boolean;
+    taskStatus?: TaskStatus;
 }
 
 export interface ColorProps {
@@ -186,3 +187,12 @@ export type Theme = {
   sizes: ThemeSizes;
   zIndices: ThemeZIndices;
 };
+
+export type TaskStatus = 
+    | 'READY_FOR_DEV'
+    | 'IN_PROGRESS'
+    | 'WAITING_FOR_REVIEW'
+    | 'QA'
+    | 'READY_FOR_RELEASE'
+    | 'BLOCKED'
+    | 'DONE';

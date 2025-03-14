@@ -1,20 +1,31 @@
 import styled from 'styled-components';
 import { Priority, PRIORITY_COLORS } from '../utils/constants';
+import { TASK_STATUS_COLORS, TASK_STATUS_LABELS } from '../utils/constants';
 import { MouseEvent } from 'react';
 import { lightenHexColor } from '../utils';
 
 interface PillProps {
     priority?: Priority;
+    taskStatus?: keyof typeof TASK_STATUS_COLORS;
     onClick?: (e: MouseEvent) => void;
     disabled?: boolean;
 }
 
-export const Pill = ({ priority, onClick, disabled }: PillProps) => {
-    // Default to MEDIUM priority as per our design requirements
-    const color = priority ? PRIORITY_COLORS[priority] : PRIORITY_COLORS.MEDIUM;
-    const title = priority 
-        ? `${priority.charAt(0) + priority.slice(1).toLowerCase()} Priority - Click to cycle`
-        : 'Medium Priority - Click to cycle';
+export const Pill = ({ priority, taskStatus, onClick, disabled }: PillProps) => {
+    // Determine the color and label
+    const color = taskStatus 
+        ? TASK_STATUS_COLORS[taskStatus] 
+        : priority 
+            ? PRIORITY_COLORS[priority] 
+            : PRIORITY_COLORS.MEDIUM;
+
+    const label = taskStatus 
+        ? TASK_STATUS_LABELS[taskStatus] 
+        : priority || 'MEDIUM';
+
+    const title = taskStatus
+        ? `${label} - Click to cycle`
+        : `${label} Priority - Click to cycle`;
 
     return (
         <PillContainer 
@@ -25,18 +36,19 @@ export const Pill = ({ priority, onClick, disabled }: PillProps) => {
             role="button"
             aria-label={title}
             data-priority={priority || 'MEDIUM'}
+            data-status={taskStatus || undefined}
         >
-            {priority || 'MEDIUM'}
+            {label}
         </PillContainer>
     );
 };
 
 const PillContainer = styled.div<{ $color: string }>`
     /* Size and shape */
-    padding: ${({theme}) => theme.spacing.xs} ${({theme}) => theme.spacing.sm};
-    border-radius: ${({theme}) => theme.borderRadius.sm};
-    font-size: ${({theme}) => theme.typography.fontSizes.x};
-    font-weight: ${({theme}) => theme.typography.fontWeights.semibold};
+    padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
+    border-radius: ${({ theme }) => theme.borderRadius.sm};
+    font-size: ${({ theme }) => theme.typography.fontSizes.x};
+    font-weight: ${({ theme }) => theme.typography.fontWeights.semibold};
     letter-spacing: 0.5px;
     text-transform: uppercase;
     display: inline-flex;
@@ -50,7 +62,7 @@ const PillContainer = styled.div<{ $color: string }>`
     
     /* Interaction */
     cursor: pointer;
-    transition: all ${({theme}) => theme.transitions.fast};
+    transition: all ${({ theme }) => theme.transitions.fast};
     user-select: none;
 
     /* Hover effect - scale animation */
