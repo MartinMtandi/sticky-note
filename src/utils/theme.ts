@@ -54,6 +54,7 @@ export const defaultTheme: Theme = {
     m: '5px',
     md: '8px',
     lg: '12px',
+    xl: '40px',
     round: '50%',
   },
   shadows: {

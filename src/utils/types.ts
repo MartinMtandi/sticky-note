@@ -114,6 +114,7 @@ export type ThemeBorderRadius = {
   m: string;
   md: string;
   lg: string;
+  xl: string;
   round: string;
 };
 
