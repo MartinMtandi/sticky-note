@@ -177,13 +177,9 @@ const NoteCard: FC<NoteCardProps> = ({
     const currentIndex = taskStatus ? Object.keys(TASK_STATUS_COLORS).indexOf(taskStatus) : 0;
     const nextStatus = statuses[(currentIndex + 1) % statuses.length];
 
-    if(nextStatus === 'DONE'){
-        setIsCompleted(true);
-    }else {
-        setIsCompleted(false);
-    }
-    
+    setIsCompleted(nextStatus === 'DONE');    
     setTaskStatus(nextStatus);
+    
     updateNote({ ...note, taskStatus: nextStatus });
 };
 
