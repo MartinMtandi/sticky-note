@@ -1,24 +1,9 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import ColorPalette from '../ColorPalette';
 import { describe, it, vi, expect } from 'vitest';
+import { colors } from '../../utils';
 
 const mockOnColorSelect = vi.fn();
-
-// Manually define the colors array for testing
-const colors = [
-    '#FFEFBE', // Yellow
-    '#AFDA9F', // Green
-    '#9BD1DE', // Blue
-    '#FED0FD', // Purple
-    '#FFB5C2', // Pink
-    '#FFB584', // Orange
-    '#7FDBDA', // Teal
-    '#BDEF92', // Lime
-    '#FF9AA2', // Coral
-    '#D4BBFF', // Lavender
-    '#98F5E1', // Mint
-    '#FFCBA4'  // Peach
-];
 
 describe('ColorPalette', () => {
     it('renders color buttons', () => {
