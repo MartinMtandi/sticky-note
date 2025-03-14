@@ -51,6 +51,7 @@ export const defaultTheme: Theme = {
   },
   borderRadius: {
     sm: '4px',
+    m: '5px',
     md: '8px',
     lg: '12px',
     round: '50%',

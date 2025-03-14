@@ -111,6 +111,7 @@ export type ThemeSpacing = {
 
 export type ThemeBorderRadius = {
   sm: string;
+  m: string;
   md: string;
   lg: string;
   round: string;
