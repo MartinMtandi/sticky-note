@@ -19,7 +19,6 @@ import { useNotes } from "../context/GlobalNotesContext";
 import { useMembers } from "../context/GlobalMembersContext";
 import Spinner from "../icons/Spinner";
 import Button from "./Button";
-import Checkbox from "./Checkbox";
 import { defaultTheme as theme } from "../utils/theme";
 import MenuIcon from "../icons/MenuIcon";
 import { Priority, TASK_STATUS_COLORS } from "../utils/constants";
