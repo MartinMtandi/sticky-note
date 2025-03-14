@@ -65,7 +65,7 @@ const Button: FC<ButtonProps> = ({
 };
 
 const StyledButton = styled.button<{ $variant: ButtonProps['variant']; $darkMode?: boolean }>`
-    ${({ $variant, $darkMode }) => {
+    ${({ $variant, $darkMode, theme }) => {
         switch ($variant) {
             case 'add':
             case 'search':
@@ -76,23 +76,23 @@ const StyledButton = styled.button<{ $variant: ButtonProps['variant']; $darkMode
                     align-items: center;
                     height: 40px;
                     width: 40px;
-                    border-radius: 50%;
+                    border-radius: ${theme.borderRadius.round};
                     cursor: pointer;
                     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                     will-change: transform, box-shadow;
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                    box-shadow: ${theme.shadows.sm};
                     border: none;
-                    color: white;
+                    color: ${theme.colors.text.light};
 
                     &:hover {
                         transform: scale(1.1);
                         background-color: rgba(127, 127, 127, 1);
-                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                        box-shadow: ${theme.shadows.md};
                     }
 
                     &:active {
                         transform: scale(0.95);
-                        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+                        box-shadow: ${theme.shadows.sm};
                     }
                 `;
             case 'delete':
@@ -101,9 +101,9 @@ const StyledButton = styled.button<{ $variant: ButtonProps['variant']; $darkMode
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    padding: 4px;
-                    border-radius: 4px;
-                    transition: background-color 0.2s ease;
+                    padding: ${theme.spacing.xs};
+                    border-radius: ${theme.borderRadius.sm};
+                    transition: background-color ${theme.transitions.fast};
                     border: none;
                     background: none;
 
@@ -117,9 +117,9 @@ const StyledButton = styled.button<{ $variant: ButtonProps['variant']; $darkMode
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    padding: 8px;
-                    border-radius: 50%;
-                    transition: all 0.2s ease;
+                    padding: ${theme.spacing.sm};
+                    border-radius: ${theme.borderRadius.md};
+                    transition: all ${theme.transitions.fast};
                     border: none;
                     background: none;
                     color: ${$darkMode ? 'white' : '#18181A'};
@@ -135,16 +135,16 @@ const StyledButton = styled.button<{ $variant: ButtonProps['variant']; $darkMode
                 `;
             default:
                 return `
-                    padding: 0.5rem 1rem;
-                    border-radius: 6px;
+                    padding: ${theme.spacing.sm} ${theme.spacing.md};
+                    border-radius: ${theme.borderRadius.m};
                     border: none;
                     cursor: pointer;
                     transition: all 0.2s;
-                    background-color: ${$variant === 'primary' ? '#66bb6a' : 'transparent'};
-                    border: 1px solid ${$variant === 'primary' ? '#66bb6a' : '#ddd'};
+                    background-color: ${$variant === 'primary' ? theme.colors.button.primary : 'transparent'};
+                    border: 1px solid ${$variant === 'primary' ? theme.colors.button.primary : '#ddd'};
 
                     &:hover {
-                        background-color: ${$variant === 'primary' ? '#4caf50' : '#f5f5f5'};
+                        background-color: ${$variant === 'primary' ? theme.colors.button.primaryHover : theme.colors.ui.superLight};
                     }
                 `;
         }
