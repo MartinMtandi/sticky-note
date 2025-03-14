@@ -137,20 +137,20 @@ const ModalWrapper = styled.div`
 const Overlay = styled.div`
     position: fixed;
     inset: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: ${({theme}) => theme.colors.modal.overlay};
     backdrop-filter: blur(2px);
 `;
 
 const ModalContainer = styled.div`
     position: relative;
-    background-color: white;
+    background-color: ${({theme}) => theme.colors.text.light};
     border-radius: 12px;
     width: 400px;
     max-width: 90vw;
     max-height: 90vh;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    box-shadow: ${({theme}) => theme.shadows.lg};
     transform: translateY(0);
     opacity: 1;
     animation: modalAppear 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -168,7 +168,7 @@ const ModalContainer = styled.div`
 `;
 
 const ModalHeader = styled.div`
-    padding: 0.8rem 1.5rem;
+    padding: ${({theme}) => theme.spacing.sm} ${({theme}) => theme.spacing.xl};
     border-bottom: 1px solid #eee;
     display: flex;
     align-items: center;
@@ -176,10 +176,10 @@ const ModalHeader = styled.div`
 `;
 
 const ColorSection = styled.div`
-    margin-top: 0.5rem;
-    padding: 1rem;
+    margin-top: ${({theme}) => theme.spacing.sm};
+    padding: ${({theme}) => theme.spacing.md};
     background-color: #f8f9fa;
-    border-radius: 8px;
+    border-radius: ${({theme}) => theme.borderRadius.md};
 
     .color-label {
         margin-bottom: 0.75rem;
@@ -189,13 +189,13 @@ const ColorSection = styled.div`
 const InputGroup = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: ${({theme}) => theme.spacing.md};
     width: 100%;
     box-sizing: border-box;
 `;
 
 const ModalBody = styled.div`
-    padding: 1.5rem;
+    padding: ${({theme}) => theme.spacing.lg};
     overflow-y: auto;
     flex: 1;
     width: 100%;
@@ -203,11 +203,11 @@ const ModalBody = styled.div`
 `;
 
 const ModalFooter = styled.div`
-    padding: 1rem 1.5rem;
+    padding: ${({theme}) => theme.spacing.md} ${({theme}) => theme.spacing.lg};
     border-top: 1px solid #eee;
     display: flex;
     justify-content: flex-end;
-    gap: 0.5rem;
+    gap: ${({theme}) => theme.spacing.sm};
 `;
 
 export default AddMemberModal;
