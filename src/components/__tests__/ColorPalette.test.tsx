@@ -1,28 +1,26 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import ColorPalette from '../ColorPalette';
 import { describe, it, vi, expect } from 'vitest';
-
-const mockOnColorSelect = vi.fn();
-
-// Manually define the colors array for testing
-const colors = [
-    '#FFEFBE', // Yellow
-    '#AFDA9F', // Green
-    '#9BD1DE', // Blue
-    '#FED0FD', // Purple
-    '#FFB5C2', // Pink
-    '#FFB584', // Orange
-    '#7FDBDA', // Teal
-    '#BDEF92', // Lime
-    '#FF9AA2', // Coral
-    '#D4BBFF', // Lavender
-    '#98F5E1', // Mint
-    '#FFCBA4'  // Peach
-];
+import { colors } from '../../utils/constants';
+import { ThemeProvider } from 'styled-components';
+import { defaultTheme as theme } from '../../utils/theme';
 
 describe('ColorPalette', () => {
+    const mockOnColorSelect = vi.fn();
+
+    const renderColorPalette = (selectedColor = '#FFEFBE') => {
+        return render(
+          <ThemeProvider theme={theme}>
+            <ColorPalette 
+              selectedColor={selectedColor} 
+              onColorSelect={mockOnColorSelect} 
+            />
+          </ThemeProvider>
+        );
+      };
+      
     it('renders color buttons', () => {
-        render(<ColorPalette selectedColor="#FFEFBE" onColorSelect={mockOnColorSelect} />);
+        renderColorPalette();
 
         // Check if color buttons are rendered with aria-label based on their color
         colors.forEach((color) => {
@@ -31,40 +29,33 @@ describe('ColorPalette', () => {
     });
 
     it('applies border to the selected color', () => {
-        render(<ColorPalette selectedColor="#FFEFBE" onColorSelect={mockOnColorSelect} />);
-
-        // Find the button using the aria-label corresponding to the selected color
-        const selectedColorButton = screen.getByLabelText('#FFEFBE');
-
-        // Ensure the selected button has the correct border style
-        expect(selectedColorButton).toHaveStyle('border: 2px solid #333');
+        const selectedColor = colors[2];
+        renderColorPalette(selectedColor);
+        const selectedButton = screen.getAllByRole('button')[2];
+        expect(selectedButton).toHaveStyle(`border: 2px solid #333`);
     });
 
     it('does not apply border to non-selected colors', () => {
-        render(<ColorPalette selectedColor="#FFEFBE" onColorSelect={mockOnColorSelect} />);
-
-        // Find the button using the aria-label corresponding to a non-selected color
-        const nonSelectedColorButton = screen.getByLabelText('#AFDA9F');
+        const selectedColor = colors[2];
+        renderColorPalette(selectedColor);
+        const nonSelectedColorButton = screen.getAllByRole('button')[3];
 
         // Ensure the non-selected button has no border
         expect(nonSelectedColorButton).toHaveStyle('border: 2px solid transparent');
     });
 
     it('calls onColorSelect when a color is clicked', () => {
-        render(<ColorPalette selectedColor="#FFEFBE" onColorSelect={mockOnColorSelect} />);
-
-        // Click a color button
-        fireEvent.click(screen.getByLabelText('#AFDA9F'));
-
-        // Ensure onColorSelect was called with the correct color
-        expect(mockOnColorSelect).toHaveBeenCalledWith('#AFDA9F');
+        renderColorPalette();
+        const firstColorButton = screen.getAllByRole('button')[0];
+        fireEvent.click(firstColorButton);
+        expect(mockOnColorSelect).toHaveBeenCalledWith(colors[0]);
     });
 
-    it('applies active styles when isSelected is true', () => {
-        render(<ColorPalette selectedColor="#FFEFBE" onColorSelect={mockOnColorSelect} />);
-
-        // Check if the button for the selected color has the "active" style
-        const selectedColorButton = screen.getByLabelText('#FFEFBE');
-        expect(selectedColorButton).toHaveStyle('border: 2px solid #333');
+    it('renders with correct color values', () => {
+        renderColorPalette();
+        const colorButtons = screen.getAllByRole('button');
+        colors.forEach((color, index) => {
+          expect(colorButtons[index]).toHaveStyle(`background-color: ${color}`);
+        });
     });
 });

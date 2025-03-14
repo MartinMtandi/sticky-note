@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import styled from 'styled-components';
-import { colors } from '../utils';
+import { colors } from '../utils/constants';
 
 interface ColorPaletteProps {
     selectedColor: string;

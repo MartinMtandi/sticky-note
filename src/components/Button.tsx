@@ -1,15 +1,11 @@
-import { FC, ButtonHTMLAttributes, MouseEvent } from 'react';
+import { FC, MouseEvent } from 'react';
 import styled from 'styled-components';
 import Typography from './Typography';
 import Plus from '../icons/Plus';
 import Trash from '../icons/Trash';
 import Close from '../icons/Close';
 import { SearchIcon } from '../icons/Search';
-
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-    variant: 'primary' | 'secondary' | 'add' | 'delete' | 'close' | 'search';
-    darkMode?: boolean;
-}
+import { ButtonProps } from '../utils/types';
 
 const Button: FC<ButtonProps> = ({ 
     variant = 'primary',
