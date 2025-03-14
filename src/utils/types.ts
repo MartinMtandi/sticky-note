@@ -112,6 +112,7 @@ export type ThemeTransitions = {
 export type ThemeTypography = {
   fontFamily: string;
   fontSizes: {
+    x: string;
     xs: string;
     sm: string;
     md: string;

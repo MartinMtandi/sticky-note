@@ -66,6 +66,7 @@ export const defaultTheme: Theme = {
   typography: {
     fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
     fontSizes: {
+        x: '0.6rem',
         xs: '0.75rem',
         sm: '0.875rem',
         md: '1rem',
